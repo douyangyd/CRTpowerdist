@@ -14,6 +14,11 @@ A shiny app has been created for non-R user (https://douyang.shinyapps.io/powerd
 
 
 
+# Author information
+This package is developed and maintained by Yongdong Ouyang, Liang Xu and Hubert Wong.
+The Shiny app is created by Yongdong Ouyang
+
+
 # Contact
 We are welcome any suggestions and comments. If you noticed any bugs, please let us know by create a pull request or conduct Derek Ouyang (douyang@cheos.ubc.ca)
 
