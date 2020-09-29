@@ -36,11 +36,12 @@ A shinyapp has been created for non-R user (https://douyang.shinyapps.io/powerdi
 <p>&nbsp;</p>
 # Author information
 This package is developed and maintained by Yongdong Ouyang, Liang Xu and Hubert Wong.
-The Shiny app is created by Yongdong Ouyang
+The Shinyapp is created by Yongdong Ouyang
+
 
 <p>&nbsp;</p>
 # Contact
-We are welcome any suggestions and comments. If you noticed any bugs or errors, please let us know by create a pull request or contact Yongdong Ouyang (douyang@cheos.ubc.ca)
+We are welcome any suggestions and comments. If you noticed any bugs or errors, please let us know by creating a pull request or contacting Yongdong Ouyang (douyang@cheos.ubc.ca)
 
 
 
