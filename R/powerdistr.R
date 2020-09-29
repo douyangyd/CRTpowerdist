@@ -8,8 +8,6 @@ require(ggplot2)
 require(doRNG)
 require(compiler)
 
-n.cores <- parallel::detectCores()
-doParallel::registerDoParallel(cores=n.cores-1)
 ### Helper 1: Convert allocations to treatment indicator and calculate
 ### weights
 rand <- function(I, J, allocs, n) {
@@ -3238,6 +3236,8 @@ power.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NUL
                      sigma.e = NULL, sigma.a = NULL, method = "analytic",
                      plot = FALSE, gen.all = TRUE, n.allocs,  n.sims, seed = NULL,
                      CV = NULL, rep = NULL){
+  n.cores <- parallel::detectCores()
+  doParallel::registerDoParallel(cores=n.cores-1)
   if (!is.null(seed)){
     set.seed(seed)
   }
@@ -3282,6 +3282,8 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
                      method = "analytic", adj.pwr=FALSE,
                      seed = NULL, n.sims,
                      CV = NULL, rep = NULL){
+  n.cores <- parallel::detectCores()
+  doParallel::registerDoParallel(cores=n.cores-1)
   if (adj.pwr == TRUE){
     if (!is.null(seed)){
       set.seed(seed)
@@ -3333,6 +3335,8 @@ power.strat.pd <- function(I, P , K , S , mu0, Tx.effect, Time.effect = NULL, pw
                           factor.time = TRUE, rho = NULL, family, design, gen.all = TRUE, n.allocs,
                           n.sims, sig.level = 0.05, plot = FALSE, seed = NULL,
                           sigma.e = NULL, sigma.a = NULL, method = "analytic", CV = NULL, rep = NULL){
+  n.cores <- parallel::detectCores()
+  doParallel::registerDoParallel(cores=n.cores-1)
   if (!is.null(seed)){
     set.seed(seed)
   }
