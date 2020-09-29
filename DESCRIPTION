@@ -1,0 +1,27 @@
+Package: powerdist
+Type: Package
+Title: Power distribution for cluster randomized trial
+Version: 0.3.0
+Author: Yongdong Ouyang, Liang Xu, Hubert Wong
+Maintainer: Yongdong Ouyang <douyang@cheos.ubc.ca>; Liang Xu <lxu@cheos.ubc.ca>
+Description: An R package to calculate attained power and construct the power distribution for cross-sectional stepped-wedge and parallel cluster randomized trials. 
+Depends:
+    R (>= 3.6),
+    arrangements,
+    doParallel,
+    parallel,
+    lme4,
+    ggplot2,
+    doRNG,
+    compiler
+Imports:
+    arrangements,
+    doParallel,
+    lme4,
+    ggplot2,
+    doRNG,
+    compiler
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.0
