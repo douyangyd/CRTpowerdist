@@ -110,7 +110,10 @@ Method = "analytic"
 \item{risk}{The risk of obtaining an attained power lower than the threshold (pwr.thrd)}
 }
 \references{
-%% ~put references to the literature/web site here ~
+Longford NT. Logistic regression with random coefficients. Computational Statistics & Data Analysis 1994; 17: 1–15.
+
+Hussey MA, Hughes JP. Design and analysis of stepped wedge cluster randomized trials. Contemp Clin Trials 2007; 28: 182–191.
+
 }
 \author{
 Yongdong Ouyang, Liang Xu, Hubert Wong

@@ -88,7 +88,10 @@ The number of times analytical formulae should be repeated when K is non-integer
 A matrix with columns representing the power, control group size, treatment group size, treatment effect estimate, and standard error for the evaluated allocation(s)
 }
 \references{
-%% ~put references to the literature/web site here ~
+Longford NT. Logistic regression with random coefficients. Computational Statistics & Data Analysis 1994; 17: 1–15.
+
+Hussey MA, Hughes JP. Design and analysis of stepped wedge cluster randomized trials. Contemp Clin Trials 2007; 28: 182–191.
+
 }
 \author{
 Yongdong Ouyang, Liang Xu, Hubert Wong
