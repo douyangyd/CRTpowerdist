@@ -21,5 +21,5 @@ The Shiny app is created by Yongdong Ouyang
 
 
 # Contact
-We are welcome any suggestions and comments. If you noticed any bugs, please let us know by create a pull request or conduct Derek Ouyang (douyang@cheos.ubc.ca)
+We are welcome any suggestions and comments. If you noticed any bugs, please let us know by create a pull request or contact Yongdong Ouyang (douyang@cheos.ubc.ca)
 
