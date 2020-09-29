@@ -1,5 +1,6 @@
 # powerdist
-Power distribution R Package
+Power distribution R Package (Version 0.3.0)
+The previous version are named during the development process and will not be published
 
 
 This is a package for power distribution 
