@@ -15,6 +15,7 @@ install.packages("devtools")
 ```
 <p>&nbsp;</p>
 ### Step two: install _"**powerdist**"_ from Github
+
 ```
 library(devtools)
 install_github("https://github.com/douyangyd/powerdist")
