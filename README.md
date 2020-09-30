@@ -23,6 +23,7 @@ library(devtools)
 install_github("https://github.com/douyangyd/powerdist")
 ```
 <p>&nbsp;</p>
+
 ### Step three: Load the package
 Remember to load the package before using the package
 
