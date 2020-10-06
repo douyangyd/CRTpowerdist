@@ -944,7 +944,7 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
 }
 
 sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = FALSE,
-                   design, gen.all = TRUE, n.allocs, n.sims, rho = NULL,
+                   design, gen.all = TRUE, n.allocs = NULL, n.sims, rho = NULL,
                    sigma.a = NULL, sigma.e = NULL, print.allocs = F, plot = FALSE, sig.level = 0.05,
                    family = "gaussian") {
   ### I: number of clusters of each type (categorized by cluster sizes) P:
@@ -1030,7 +1030,7 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
   if (length(I) ==1 & length(unique(P)) != 1){
     stop("Please consider function sim.ap as the parameters you entered only have one unique allocation")
   }
-  if (gen.all == FALSE & n.allocs == "A") {
+  if (gen.all == FALSE & is.null(n.allocs)) {
     stop("Evaluating all allocations is impossible without listing out all allocations")
   }
   if (length(Time.effect)>1 & length(Time.effect) != (length(P))) {
@@ -1062,7 +1062,7 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
     all.ordwgh <- all_allocs(I, 2, P)
     allocs <- all.ordwgh$order - 1
     wgh <- all.ordwgh$weights
-    if (n.allocs == "A") {
+    if (is.null(n.allocs)) {
       pred.power <- FALSE
       sample.allocs <- allocs
       sample.weight <- wgh
@@ -1298,7 +1298,7 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
     all.ordwgh <- all_allocs(I, J, P)
     allocs <- all.ordwgh$order
     wgh <- all.ordwgh$weights
-    if (n.allocs == "A") {
+    if (is.null(n.allocs)) {
       pred.power <- FALSE
       sample.allocs <- allocs
       sample.weight <- wgh
@@ -1664,7 +1664,7 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
 }
 
 sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = FALSE,
-                          design, gen.all = TRUE, n.allocs,  n.sims, rho = NULL,
+                          design, gen.all = TRUE, n.allocs = NULL, n.sims, rho = NULL,
                           sigma.a = NULL, sigma.e = NULL, print.allocs = TRUE, plot = FALSE, sig.level = 0.05,
                           family = "gaussian") {
 
@@ -1724,7 +1724,7 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
   if (length(I) ==1 & length(unique(P)) != 1){
     stop("Please consider function sim.ap as the parameters you entered only have one unique allocation")
   }
-  if (gen.all == FALSE & n.allocs == "A") {
+  if (gen.all == FALSE & is.null(n.allocs)) {
     stop("Evaluating all allocations is impossible without listing out all allocations")
   }
 
@@ -1773,7 +1773,7 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
     all.ordwgh <- all_allocs_strat(I = I, P=P, S = S, K=K)
     allocs <- all.ordwgh$order - 1
     wgh <- all.ordwgh$weights
-    if (n.allocs == "A") {
+    if (is.null(n.allocs)) {
       pred.power <- FALSE
       sample.allocs <- allocs
       sample.weight <- wgh
@@ -1987,7 +1987,7 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
   all.ordwgh <- all_allocs_strat(I, P, S, K)
   allocs <- all.ordwgh$order
   wgh <- all.ordwgh$weights
-  if (n.allocs == "A") {
+  if (is.null(n.allocs)) {
     pred.power <- FALSE
     sample.allocs <- allocs
     sample.weight <- wgh
