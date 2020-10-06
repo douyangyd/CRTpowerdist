@@ -543,7 +543,7 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
       con <- c()
       int <- c()
       for (i in 1:length(temp)){
-        pval[i] <- mean(temp[[i]]$pval <= 0.05)
+        pval[i] <- mean(temp[[i]]$pval <= sig.level[i])
         coef[i] <- mean(temp[[i]]$coef[,1])
         SE[i] <- mean(temp[[i]]$coef[,2])
         con[i] <- mean(temp[[i]]$con)
@@ -1070,7 +1070,7 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
       print(paste0("Total number of unique allocations: ", nrow(sample.allocs)))
     } else
     {
-      pred.power <- TRUE
+      pred.power <- FALSE
       index <- sample(1:nrow(allocs), n.allocs)
       sample.allocs <- allocs[index, , drop = FALSE]  #maintain matrix type when n.allocs=1
       sample.weight <- wgh[index]
@@ -1781,7 +1781,7 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
       print(paste0("Total number of unique allocations: ", nrow(sample.allocs)))
     } else
     {
-      pred.power <- TRUE
+      pred.power <- FALSE
       index <- sample(1:nrow(allocs), n.allocs)
       sample.allocs <- allocs[index, , drop = FALSE]  #maintain matrix type when n.allocs=1
       sample.weight <- wgh[index]
@@ -2947,7 +2947,6 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
       size = Design_out$size
 
       if (family == "gaussian") {
-        Tx.effect = Tx.effect - mu0
 
         # generate covariance matrix for cross-sectional design
         Ve <- diag(1, nrow = sum(size))
@@ -3025,7 +3024,6 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
     }
 
     if (family == "gaussian") {
-      Tx.effect = Tx.effect - mu0
       # Manatunga et al. (2001) Sample size estimation in cluster randomized
       # studies with varying cluster size:
       power.CV <- pnorm(sqrt(sum(I)/2 * mean(K) * Tx.effect^2/2/sigma.e^2/(1 + ((CV^2 + 1) * mean(K) - 1) * rho)) - qnorm(p = (1 - sig.level/2)))
@@ -3081,7 +3079,6 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
 
 
       if (family == "gaussian") {
-        Tx.effect = Tx.effect - mu0
         Ve <- diag(1, nrow = sum(size))
 
         Vclus <- lapply(1:sum(I), FUN = function(clus) {
