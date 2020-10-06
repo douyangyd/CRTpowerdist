@@ -3212,11 +3212,13 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
     }
   } else {
     allocs <- user.allocs
-    wgh <- 1/nrow(allocs)
+    wgh <- NULL
     risk <- NULL}
 
-  if (design == "sw") return(list(attained.power=power.mean, expected.power = sum(power.mean*wgh), PREP= power.CV, allocations = allocs, risk = risk))
-  if (design == "pcrt")  return(list(attained.power=power.mean, expected.power = sum(power.mean*wgh), PREP= power.CV, allocations = allocs, risk = risk))
+  if (design == "sw" & is.null(user.allocs)) return(list(attained.power=power.mean, expected.power = sum(power.mean*wgh), PREP= power.CV, allocations = allocs, risk = risk))
+  if (design == "sw" & !is.null(user.allocs)) return(list(attained.power=power.mean, PREP= power.CV, allocations = allocs, risk = risk))
+  if (design == "pcrt" & is.null(user.allocs))  return(list(attained.power=power.mean, expected.power = sum(power.mean*wgh), PREP= power.CV, allocations = allocs, risk = risk))
+  if (design == "pcrt" & !is.null(user.allocs))  return(list(attained.power=power.mean, PREP= power.CV, allocations = allocs, risk = risk))
 
 }
 
