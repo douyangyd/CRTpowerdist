@@ -1660,7 +1660,7 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
     risk <- NULL
   }
   list(coefs = pred.data, predicted.power = as.vector(pred.value), weights = c(sample.weight),
-       weighted.power = wgt.power, risk = risk, allocation = sample.allocs)
+       PREP = wgt.power, risk = risk, allocation = sample.allocs)
 }
 
 sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = FALSE,
@@ -2349,7 +2349,7 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
     risk <- NULL
   }
   list(coefs = pred.data, predicted.power = as.vector(pred.value), weights = c(sample.weight),
-      weighted.power = wgt.power, risk = risk, allocation = sample.allocs)
+      PREP = wgt.power, risk = risk, allocation = sample.allocs)
 }
 
 siglevel <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FALSE,
@@ -3212,10 +3212,10 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
     wgh <- NULL
     risk <- NULL}
 
-  if (design == "sw" & is.null(user.allocs)) return(list(attained.power=power.mean, expected.power = sum(power.mean*wgh), PREP= power.CV, allocations = allocs, risk = risk))
-  if (design == "sw" & !is.null(user.allocs)) return(list(attained.power=power.mean, PREP= power.CV, allocations = allocs, risk = risk))
-  if (design == "pcrt" & is.null(user.allocs))  return(list(attained.power=power.mean, expected.power = sum(power.mean*wgh), PREP= power.CV, allocations = allocs, risk = risk))
-  if (design == "pcrt" & !is.null(user.allocs))  return(list(attained.power=power.mean, PREP= power.CV, allocations = allocs, risk = risk))
+  if (design == "sw" & is.null(user.allocs)) return(list(attained.power=power.mean, PREP = sum(power.mean*wgh), PREP.CV= power.CV, allocations = allocs, risk = risk))
+  if (design == "sw" & !is.null(user.allocs)) return(list(attained.power=power.mean, PREP.CV= power.CV, allocations = allocs, risk = risk))
+  if (design == "pcrt" & is.null(user.allocs))  return(list(attained.power=power.mean, PREP = sum(power.mean*wgh), PREP.CV= power.CV, allocations = allocs, risk = risk))
+  if (design == "pcrt" & !is.null(user.allocs))  return(list(attained.power=power.mean, PREP.CV= power.CV, allocations = allocs, risk = risk))
 
 }
 
