@@ -8,7 +8,7 @@ Calculate attained powers and construct power distribution for CRT
 Use simulations or analytic formula to calculate attained powers and construct pre-randomization power distribution for all allocations that a randomization algorithm can produce
 }
 \usage{
-power.pd(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = TRUE, family,  design, rho = NULL, sigma.e = NULL, sigma.a = NULL, sig.level = 0.05, method = "analytic", plot = FALSE, gen.all = TRUE, n.allocs, n.sims, seed = NULL, CV = NULL, rep = NULL)
+power.pd(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = TRUE, family,  design, rho = NULL, sigma.e = NULL, sigma.a = NULL, sig.level = 0.05, method = "analytic", plot = FALSE, gen.all = TRUE, n.allocs = NULL, n.sims, seed = NULL, CV = NULL, rep = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -97,7 +97,7 @@ Method = "sim"
 A matrix displays the power, estimated coefficient, standard error for estimated coefficient, treatment-vs-time correlation (TTC), control group size (control.size), treatment group size (trt.size), and absolute treatment group imbalance (TGI) for each evaluated allocation.
 }
 \item{predicted.power}{The predicted power for unevaluated allocations}
-\item{expected.power}{Average of all attained powers, including both evaluated and predicted powers}
+\item{PREP}{Average of all attained powers, including both evaluated and predicted powers}
 \item{weights}{The weights used for all (evaluated) allocations}
 \item{PREP}{Pre-randomization expected power according to CV-based formulae (not for power.strat.pd)}
 \item{risk}{The risk of obtaining an attained power lower than the threshold (pwr.thrd)}
@@ -105,9 +105,9 @@ A matrix displays the power, estimated coefficient, standard error for estimated
 
 Method = "analytic"
 \item{attained.power}{Attained power for each unique allocation}
-\item{PREP}{Average of all attained powers, including both evaluated and predicted powers}
+\item{PREP}{Average of all attained powers using analytic formulae}
 \item{allocation}{A matrix of all possible unique allocations or user-specified allocations}
-\item{PREP}{Pre-randomization expected power according to CV-based formulae (not for power.strat.pd)}
+\item{PREP.CV}{Pre-randomization expected power according to CV-based formulae (not for power.strat.pd)}
 \item{risk}{The risk of obtaining an attained power lower than the threshold (pwr.thrd)}
 }
 
