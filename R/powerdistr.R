@@ -2671,7 +2671,7 @@ siglevel <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = 
             output[j,] <- coef(summary(m))["Treatment",]
             pval[j] <- 2 * pnorm(abs(coef['Treatment', 'Estimate']/coef['Treatment', 'Std. Error']), lower.tail = F)
           }
-          list("coef"=output, "pval"= pval,"con"= con, "int"= int, "cor"= cor)
+          list("coef"=output, "pval"= pval, "con"= con, "int"= int, "cor"= cor)
         }
       pval <- c()
       for (i in 1:length(temp)){
@@ -3287,7 +3287,8 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
     if (!is.null(seed)){
       set.seed(seed)
     }
-    temp <- siglevel(I = I, P = P, K = K, user.allocs = user.allocs, mu0 = mu0, Tx.effect = 0, Time.effect = Time.effect,
+    if (family != "gaussain"){Tx = 1} else {Tx = 0}
+    temp <- siglevel(I = I, P = P, K = K, user.allocs = user.allocs, mu0 = mu0, Tx.effect = Tx, Time.effect = Time.effect,
                       factor.time = factor.time, design = design, n.sims = n.sims, rho = rho,
                       sigma.e = sigma.e, sigma.a = sigma.a, sig.level = sig.level,
                       family = family)
