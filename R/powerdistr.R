@@ -3287,7 +3287,7 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
     if (!is.null(seed)){
       set.seed(seed)
     }
-    if (family != "gaussain"){Tx = 1} else {Tx = 0}
+    if (family != "gaussian"){Tx = 1} else {Tx = 0}
     temp <- siglevel(I = I, P = P, K = K, user.allocs = user.allocs, mu0 = mu0, Tx.effect = Tx, Time.effect = Time.effect,
                       factor.time = factor.time, design = design, n.sims = n.sims, rho = rho,
                       sigma.e = sigma.e, sigma.a = sigma.a, sig.level = sig.level,
