@@ -3046,7 +3046,6 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
 
 
   if (design == "sw") {
-    ### some code for checking validity
     if (is.list(P)){np <- length(P[[1]])} else {np <- length(P)}
     ncpp <- round(sum(I)/np) # number of cluster per period
     if (is.null(CV)) {
@@ -3054,8 +3053,10 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
     }
     tol <- sum(K*(np+1)) ### total size
     m <- mean(K)
+
     DE_C <- 1+(m*(1+CV^2)-1)*rho
-    DE_R <- (np + 1)*3*np*(1-(m*rho/DE_C))*(1+np*(m*rho/DE_C))/(((np^2)-1)*(2+np*(m*rho/DE_C)))
+    r <- (m*(1+CV^2)*rho)/DE_C
+    DE_R <- (np+1)*3*np*(1-r)*(1+np*r)/(((np^2)-1)*(2+np*r))
 
     if (family == "gaussian"){
       ses <- abs(Tx.effect)/sigma.e
