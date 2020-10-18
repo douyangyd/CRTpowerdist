@@ -3056,19 +3056,20 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
 
     DE_C <- 1+(m*(1+CV^2)-1)*rho
     r <- (m*(1+CV^2)*rho)/DE_C
-    DE_R <- (np+1)*3*np*(1-r)*(1+np*r)/(((np^2)-1)*(2+np*r))
-
+    DE_R <- 3*np*(1-r)*(1+np*r)/(((np^2)-1)*(2+np*r))
+    ## Power.CV is based on Hemming et al 2020 "A tutorial on sample size calculation for multiple-period cluster randomized parallel,
+    ## cross-over and stepped-wedge trials using the Shiny CRT Calculator"
     if (family == "gaussian"){
       ses <- abs(Tx.effect)/sigma.e
-      power.CV <- pnorm(sqrt(np*(np+1)*m*ncpp*(ses^2)/(4*DE_C*DE_R))-qnorm(1-sig.level/2))
+      power.CV <- pnorm(sqrt(np*m*ncpp*(ses^2)/(4*DE_C*DE_R))-qnorm(1-sig.level/2))
     }
     if (family == "binomial"){
       ses <- abs(mu1-mu0)/sigma.e
-      power.CV <- pnorm(sqrt(np*(np+1)*m*ncpp*(ses^2)/(4*DE_C*DE_R))-qnorm(1-sig.level/2))
+      power.CV <- pnorm(sqrt(np*m*ncpp*(ses^2)/(4*DE_C*DE_R))-qnorm(1-sig.level/2))
     }
     if (family == "poisson"){
       ses <- abs(mu1-mu0)/sigma.e
-      power.CV <- pnorm(sqrt(np*(np+1)*m*ncpp*(ses^2)/(4*DE_C*DE_R))-qnorm(1-sig.level/2))
+      power.CV <- pnorm(sqrt(np*m*ncpp*(ses^2)/(4*DE_C*DE_R))-qnorm(1-sig.level/2))
     }
 
     power.rep <- foreach(iterators::icount(rep), .packages = c("arrangements", "Matrix") , .export = c("rand", "multi", "alloc1", "freq", "DesignMatrix", "all_allocs", "all_allocs_strat"), .combine = rbind ) %dorng% {
