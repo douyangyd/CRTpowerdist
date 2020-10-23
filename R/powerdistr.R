@@ -3298,6 +3298,7 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
     res <- analytic.pd (I = I, P = P, K = K, user.allocs = user.allocs, pwr.thrd = pwr.thrd, factor.time = factor.time,
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = F,
                         design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
+    res$PREP.CV <- NULL
 
   }
   if (method == "sim"){
@@ -3321,6 +3322,7 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
     res1 <- analytic.pd (I = I, P = P, K = K, user.allocs = user.allocs, pwr.thrd = pwr.thrd, factor.time = factor.time,
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot =F,
                         design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
+    res1$PREP.CV <- NULL
   }
   if(method =="both") {return(list(simres = res, analyticres = res1))} else {return(res)}
 }
