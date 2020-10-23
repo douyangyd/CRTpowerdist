@@ -8,7 +8,7 @@ Calculate attained power for specific allocation(s)
 Use simulations or analytic formula to calculate attained power for specific allocations
 }
 \usage{
-power.ap(I, P, K, mu0, Tx.effect, Time.effect = NULL, user.allocs, factor.time = TRUE, family, design, rho = NULL, sigma.e = NULL, sigma.a = NULL, sig.level = 0.05, method = "analytic", adj.pwr = FALSE, seed = NULL, n.sims, CV = NULL, rep = NULL)
+power.ap(I, P, K, mu0, Tx.effect, Time.effect = NULL, user.allocs, factor.time = TRUE, family, design, rho = NULL, sigma.e = NULL, sigma.a = NULL, sig.level = 0.05, method = "analytic", adj.pwr = FALSE, seed = NULL, n.sims, rep = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -74,9 +74,6 @@ The number of trials the user wants to simulate to calculation power (should be 
 }
 
 Only used with method = “analytic”
-  \item{CV}{
-Coefficient of variation of cluster sizes
-}
   \item{rep}{
 The number of times analytical formulae should be repeated when K is non-integer. We recommend a number of around 1,000 to reach a stable estimate. Leave at 1 or NULL when the cluster sizes are integers.
 }

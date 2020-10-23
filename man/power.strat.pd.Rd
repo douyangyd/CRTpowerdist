@@ -8,7 +8,7 @@ Calculate attained powers and construct power distribution for stratified CRT
 Use simulations or analytic formula to calculate attained powers and construct pre-randomization power distribution for all allocations that a randomization algorithm can produce in stratified CRT
 }
 \usage{
-power.strat.pd(I, P, K, S, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = TRUE,  family, design, rho = NULL, sigma.a = NULL, sigma.e = NULL, sig.level = 0.05, method = "analytic", plot = FALSE, gen.all = TRUE, n.allocs = NULL, n.sims, seed = NULL, CV = NULL, rep = NULL)
+power.strat.pd(I, P, K, S, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = TRUE,  family, design, rho = NULL, sigma.a = NULL, sigma.e = NULL, sig.level = 0.05, method = "analytic", plot = FALSE, gen.all = TRUE, n.allocs = NULL, n.sims, seed = NULL, rep = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -78,10 +78,6 @@ A number for set.seed () to reproduce simulation
 }
 
 Only available when method = “analytic”
-
-  \item{CV}{
-Coefficient of variation of cluster sizes
-}
   \item{rep}{
 The number of times analytical formulae should be repeated when K is non-integer. We recommend a number of around 1,000 to reach a stable estimate. Leave at 1 or NULL when the cluster sizes are integers
 }
