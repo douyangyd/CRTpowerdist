@@ -2829,7 +2829,7 @@ siglevel <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = 
 ### Formula based calculation
 analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr.thrd = NULL, factor.time = FALSE,
                         mu0, Tx.effect, Time.effect = NULL, rho = NULL, family, design, sig.level = 0.05, plot= TRUE,
-                        sigma.e = NULL, sigma.a = NULL,  rep = NULL) {
+                        sigma.e = NULL, sigma.a = NULL, rep = NULL) {
   # I = vector of cluster types P = # of clusters at each step (excluding
   # baseline) K = vector of cluster sizes factor.time = logical; for
   # whether time should be considered a factor rho = ICC mu0 = baseline
@@ -2840,7 +2840,6 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
   # design should be one of 'pcrt' or 'sw'
   # sigma.a: between-cluster variance
   # sigma.e: within-cluster variance
-  # CV: coefficient of variation, only used for power
   # calculation with design 'pcrt'
   # rep = number of times analytical formulae for 'sw' type should be repeated
   # S = stratum indicator
@@ -3046,9 +3045,7 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
   if (design == "sw") {
     if (is.list(P)){np <- length(P[[1]])} else {np <- length(P)}
     ncpp <- round(sum(I)/np) # number of cluster per period
-    if (is.null(CV)) {
-      CV <- sd(K*(np+1))/mean(K*(np+1))
-    }
+    CV <- sd(K*(np+1))/mean(K*(np+1))
     tol <- sum(K*(np+1)) ### total size
     m <- mean(K)
 
