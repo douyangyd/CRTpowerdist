@@ -2829,7 +2829,7 @@ siglevel <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = 
 ### Formula based calculation
 analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr.thrd = NULL, factor.time = FALSE,
                         mu0, Tx.effect, Time.effect = NULL, rho = NULL, family, design, sig.level = 0.05, plot= TRUE,
-                        sigma.e = NULL, sigma.a = NULL, CV = NULL, rep = NULL) {
+                        sigma.e = NULL, sigma.a = NULL,  rep = NULL) {
   # I = vector of cluster types P = # of clusters at each step (excluding
   # baseline) K = vector of cluster sizes factor.time = logical; for
   # whether time should be considered a factor rho = ICC mu0 = baseline
@@ -3019,9 +3019,7 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
       power
     }
 
-    if (is.null(CV)) {
-      CV <- sd(K)/mean(K)
-    }
+    CV <- sd(K)/mean(K)
 
     if (family == "gaussian") {
       # Manatunga et al. (2001) Sample size estimation in cluster randomized
@@ -3236,7 +3234,7 @@ power.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NUL
                      design, rho = NULL, family, sig.level = 0.05,
                      sigma.e = NULL, sigma.a = NULL, method = "analytic",
                      plot = FALSE, gen.all = TRUE, n.allocs,  n.sims, seed = NULL,
-                     CV = NULL, rep = NULL){
+                      rep = NULL){
   n.cores <- parallel::detectCores()
   doParallel::registerDoParallel(cores=n.cores-1)
   if (!is.null(seed)){
@@ -3245,7 +3243,7 @@ power.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NUL
   if (method == "analytic"){
     res <- analytic.pd (I = I, P = P, K = K, pwr.thrd = pwr.thrd, factor.time = factor.time,
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = plot,
-                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a, CV = CV, rep = rep)
+                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
 
   }
   if (method == "sim"){
@@ -3261,7 +3259,7 @@ power.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NUL
                    family = family)
     res1 <- analytic.pd (I = I, P = P, K = K, user.allocs = res$allocation, pwr.thrd = pwr.thrd, factor.time = factor.time,
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = plot,
-                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a, CV = CV, rep = rep)
+                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
     allocs <- res$allocation
     wgh <- res$weights
     final.data <- data.frame(weight = c(wgh),
@@ -3282,7 +3280,7 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
                      family, design, rho = NULL, sigma.e = NULL, sigma.a = NULL, sig.level = 0.05,
                      method = "analytic", adj.pwr=FALSE,
                      seed = NULL, n.sims,
-                     CV = NULL, rep = NULL){
+                      rep = NULL){
   n.cores <- parallel::detectCores()
   doParallel::registerDoParallel(cores=n.cores-1)
   if (adj.pwr == TRUE){
@@ -3302,7 +3300,7 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
     }
     res <- analytic.pd (I = I, P = P, K = K, user.allocs = user.allocs, pwr.thrd = pwr.thrd, factor.time = factor.time,
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = F,
-                        design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a, CV = CV, rep = rep)
+                        design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
 
   }
   if (method == "sim"){
@@ -3325,7 +3323,7 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
                    family = family)
     res1 <- analytic.pd (I = I, P = P, K = K, user.allocs = user.allocs, pwr.thrd = pwr.thrd, factor.time = factor.time,
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot =F,
-                        design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a, CV = CV, rep = rep)
+                        design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
   }
   if(method =="both") {return(list(simres = res, analyticres = res1))} else {return(res)}
 }
@@ -3336,7 +3334,7 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
 power.strat.pd <- function(I, P , K , S , mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
                           factor.time = TRUE, rho = NULL, family, design, gen.all = TRUE, n.allocs,
                           n.sims, sig.level = 0.05, plot = FALSE, seed = NULL,
-                          sigma.e = NULL, sigma.a = NULL, method = "analytic", CV = NULL, rep = NULL){
+                          sigma.e = NULL, sigma.a = NULL, method = "analytic",  rep = NULL){
   n.cores <- parallel::detectCores()
   doParallel::registerDoParallel(cores=n.cores-1)
   if (!is.null(seed)){
@@ -3345,7 +3343,7 @@ power.strat.pd <- function(I, P , K , S , mu0, Tx.effect, Time.effect = NULL, pw
   if (method == "analytic"){
     res <- analytic.pd (I = I, P = P, K = K, S = S, pwr.thrd = pwr.thrd, factor.time = factor.time,
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot =plot,
-                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a, CV = CV, rep = rep)
+                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
     res$PREP <- NULL
   }
   if (method == "sim"){
@@ -3361,7 +3359,7 @@ power.strat.pd <- function(I, P , K , S , mu0, Tx.effect, Time.effect = NULL, pw
                           family = family)
     res1 <- analytic.pd (I = I, P = P, K = K, S = S, user.allocs = res$allocation, pwr.thrd = pwr.thrd, factor.time = factor.time,
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot =plot,
-                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a, CV = CV, rep = rep)
+                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
     allocs <- res$allocation
     wgh <- res$weights
     final.data <- data.frame(weight = c(wgh),
