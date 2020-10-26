@@ -38,13 +38,13 @@ Time effect (linear scale). Default is no time effect. The time effect can be a 
 A matrix. Each row represents a specific allocation (a vector indicating when the cluster transit from control to intervention) that the user wants to evaluate for power
 }
   \item{factor.time}{
-Logical values. Whether treating time as a categorical variable in  the analysis. In simulation, user can treat time differently in data generator and analysis model. (i.e., categorical time effect in data generator, but continuous time effect in the analysis). However, these two must match in analytic calculation. In P-CRT, the value is ignored
+Logical values. Whether treating time as a categorical variable in  the analysis. In simulation, user can treat time differently in data generator and analysis model. (i.e., categorical time effect in data generator, but continuous time effect in the analysis). However, these two must match in analytic calculation. For the P-CRT, this value is ignored.
 }
   \item{family}{
-Indicate the type of outcome. One of “gaussian”, “binomial” or “poisson” (case sensitive)
+Indicate the type of outcome. One of "gaussian", "binomial" or "poisson" (case sensitive)
 }
   \item{design}{
-Can be: parallel cluster randomized trial (“pcrt”) or stepped-wedge trial (“sw”)
+Can be: parallel cluster randomized trial ("pcrt") or stepped-wedge trial ("sw")
 }
   \item{rho}{
 Intra-cluster coefficient (ICC)
@@ -59,7 +59,7 @@ Individual-level SD (at most, two of rho, sigma.a, and sigma.e should be provide
 Significance level (Default=0.05). If you have different allocations to evaluate the sig.level can be a vector in which the i-th entry specifies the significance level for the allocation in the i-th row of user.allocs
 }
   \item{method}{
-“sim”, “analytic” or “both”. Choice of using simulation, analytic formula or both methods to calculate the power
+"sim", "analytic" or "both". Choice of using simulation, analytic formula or both methods to calculate the power
 }
   \item{adj.pwr}{
 Whether evaluate power adjusted for the P-value cut-off that corresponds to achieving the nominal Type I error rate
@@ -68,12 +68,12 @@ Whether evaluate power adjusted for the P-value cut-off that corresponds to achi
   A number for set.seed () to reproduce simulation
 }
 
-Only used with method = “sim” or “both”
+Only used with method = "sim" or "both"
   \item{n.sims}{
 The number of trials the user wants to simulate to calculation power (should be greater than 1)
 }
 
-Only used with method = “analytic”
+Only used with method = "analytic"
   \item{rep}{
 The number of times analytical formulae should be repeated when K is non-integer. We recommend a number of around 1,000 to reach a stable estimate. Leave at 1 or NULL when the cluster sizes are integers.
 }

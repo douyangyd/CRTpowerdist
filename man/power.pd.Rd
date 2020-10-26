@@ -35,16 +35,16 @@ Treatment effect (natural scale: risk difference gaussian outcome, odds ratio fo
 Time effect (linear scale). Default is no time effect. The time effect can be a continuous linear trend (a single number) or categorical time effect
 }
   \item{pwr.thrd}{
-The threshold used to define “low power”. If NULL no risk will be calculated, risk in the output returns NA by default
+The threshold used to define "low power". If NULL no risk will be calculated, risk in the output returns NA by default
 }
   \item{factor.time}{
-Logical values. Whether treating time as a categorical variable in  the analysis. In simulation, user can treat time differently in data generator and analysis model. (i.e., categorical time effect in data generator, but continuous time effect in the analysis). However, these two must match in analytic calculation. In P-CRT, the value is ignored
+Logical values. Whether treating time as a categorical variable in  the analysis. In simulation, user can treat time differently in data generator and analysis model. (i.e., categorical time effect in data generator, but continuous time effect in the analysis). However, these two must match in analytic calculation. For the P-CRT, this value is ignored.
 }
   \item{family}{
-Indicate the type of outcome. One of “gaussian”, “binomial” or “poisson” (case sensitive)
+Indicate the type of outcome. One of "gaussian", "binomial" or "poisson" (case sensitive)
 }
   \item{design}{
-Can be: parallel cluster randomized trial (“pcrt”) or stepped-wedge trial (“sw”)
+Can be: parallel cluster randomized trial ("pcrt") or stepped-wedge trial ("sw")
 }
   \item{rho}{
 Intra-cluster coefficient (ICC)
@@ -59,18 +59,18 @@ Individual-level SD (at most, two of rho, sigma.a, and sigma.e should be provide
 Significance level (Default = 0.05)
 }
   \item{method}{
-“sim”, “analytic” or “both”. Choice of using simulation, analytic formula or both methods to calculate the power
+"sim", "analytic" or "both". Choice of using simulation, analytic formula or both methods to calculate the power
 }
   \item{plot}{
 TRUE or FALSE. Whether to print the histogram of pre-randomization power distribution
 }
 
-Only used when method = “sim” and “both”
+Only used when method = "sim" and "both"
   \item{gen.all}{
 Whether generate all possible unique allocations before sampling. If TRUE, all possible unique allocation will be listed
 }
   \item{n.allocs}{
-“A” (by default) or a number. The number of randomization order(s) to evaluate. It could be an "A" where all possible unique allocations will be evaluated. If a number is entered, a sample of unique allocations will be evaluated, then the predicted powers for rest allocations will be evaluated
+NULL (by default) or a number. The number of randomization order(s) to evaluate. It could be an NULL where all possible unique allocations will be evaluated. If a number is entered, a sample of unique allocations will be evaluated, then the predicted powers for rest allocations will be evaluated
 }
   \item{n.sims}{
 The number of trials the user wants to simulate to calculation power (should be greater than 1)
@@ -79,7 +79,7 @@ The number of trials the user wants to simulate to calculation power (should be 
 A number for set.seed () to reproduce simulation
 }
 
-Only available when method = “analytic”
+Only available when method = "analytic"
   \item{rep}{
 The number of times analytic formulae should be repeated when K is non-integer. We recommend a number of around 1,000 to reach a stable estimate. Leave at 1 or NULL when the cluster sizes are integers.
 }
