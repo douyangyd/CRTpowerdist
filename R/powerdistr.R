@@ -3209,10 +3209,10 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
     wgh <- NULL
     risk <- NULL}
 
-  if (design == "sw" & is.null(user.allocs)) return(list(attained.power=power.mean, PREP = sum(power.mean*wgh), PREP.CV= power.CV, allocations = allocs, risk = risk))
-  if (design == "sw" & !is.null(user.allocs)) return(list(attained.power=power.mean, PREP.CV= power.CV, allocations = allocs, risk = risk))
-  if (design == "pcrt" & is.null(user.allocs))  return(list(attained.power=power.mean, PREP = sum(power.mean*wgh), PREP.CV= power.CV, allocations = allocs, risk = risk))
-  if (design == "pcrt" & !is.null(user.allocs))  return(list(attained.power=power.mean, PREP.CV= power.CV, allocations = allocs, risk = risk))
+  if (design == "sw" & is.null(user.allocs)) return(list(attained.power=power.mean, PREP = sum(power.mean*wgh), CV = CV, PREP.CV= power.CV, allocations = allocs, risk = risk))
+  if (design == "sw" & !is.null(user.allocs)) return(list(attained.power=power.mean, CV = CV, PREP.CV= power.CV, allocations = allocs, risk = risk))
+  if (design == "pcrt" & is.null(user.allocs))  return(list(attained.power=power.mean, PREP = sum(power.mean*wgh), CV = CV, PREP.CV= power.CV, allocations = allocs, risk = risk))
+  if (design == "pcrt" & !is.null(user.allocs))  return(list(attained.power=power.mean, CV = CV, PREP.CV= power.CV, allocations = allocs, risk = risk))
 
 }
 
