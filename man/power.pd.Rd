@@ -104,6 +104,7 @@ Method = "analytic"
 \item{attained.power}{Attained power for each unique allocation}
 \item{PREP}{Average of all attained powers using analytic formulae}
 \item{allocation}{A matrix of all possible unique allocations or user-specified allocations}
+\item{CV}{Coefficient of variation of cluster sizes}
 \item{PREP.CV}{Pre-randomization expected power according to CV-based formulae (not for power.strat.pd)}
 \item{risk}{The risk of obtaining an attained power lower than the threshold (pwr.thrd)}
 }

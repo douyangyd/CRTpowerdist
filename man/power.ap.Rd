@@ -82,7 +82,14 @@ The number of times analytical formulae should be repeated when K is non-integer
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
+Method = "sim"
 A matrix with columns representing the power, control group size, treatment group size, treatment effect estimate, and standard error for the evaluated allocation(s)
+
+
+Method = "analytic"
+\item{attained.power}{Attained power for each unique allocation}
+\item{CV}{Coefficient of variation of cluster sizes}
+\item{allocation}{A matrix of all possible unique allocations or user-specified allocations}
 }
 \references{
 Longford NT. Logistic regression with random coefficients. Computational Statistics & Data Analysis 1994; 17: 1–15.
