@@ -83,25 +83,35 @@ The number of times analytical formulae should be repeated when K is non-integer
 }
 \value{
 Method = "sim"
-A matrix with columns representing the power, control group size, treatment group size, treatment effect estimate, and standard error for the evaluated allocation(s)
+
+A list contains following objects:
+\item{attained.power}{Attained power for evaluated allocation(s)}
+\item{SE}{The average standard error for estimated treatment coefficients}
+\item{coefs}{The average of the treatment effect coefficients}
+\item{TGI}{Absolute treatment group imbalance for evaluated allocation(s)}
+\item{TTC}{Treatment-vs-time correlation for evaluated allocation(s)}
 
 
 Method = "analytic"
+
+A list contains following objects:
 \item{attained.power}{Attained power for each unique allocation}
 \item{CV}{Coefficient of variation of cluster sizes}
-\item{allocation}{A matrix of all possible unique allocations or user-specified allocations}
+
 }
+
 \references{
 Longford NT. Logistic regression with random coefficients. Computational Statistics & Data Analysis 1994; 17: 1-15.
 
 Hussey MA, Hughes JP. Design and analysis of stepped wedge cluster randomized trials. Contemp Clin Trials 2007; 28: 182-191.
 
-
 Karla Hemming, Jessica Kasza, Richard Hooper, Andrew Forbes, Monica Taljaard, A tutorial on sample size calculation for multiple-period cluster randomized parallel, cross-over and stepped-wedge trials using the Shiny CRT Calculator, International Journal of Epidemiology, Volume 49, Issue 3, June 2020, Pages 979-995.
+
 }
 \author{
 Yongdong Ouyang, Liang Xu, Hubert Wong
 }
+
 \note{
 %%  ~~further notes~~
 }

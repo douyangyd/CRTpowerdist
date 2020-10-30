@@ -70,18 +70,18 @@ Only used when method = "sim" and "both"
 Whether generate all possible unique allocations before sampling. If TRUE, all possible unique allocation will be listed
 }
   \item{n.allocs}{
-NULL (by default) or a number. The number of randomization order(s) to evaluate. It could be an NULL where all possible unique allocations will be evaluated. If a number is entered, a sample of unique allocations will be evaluated, then the predicted powers for rest allocations will be evaluated
+NULL (by default) or a number. The number of unique allocations to evaluate. If NULL, all possible unique allocations will be evaluated. If a number is entered, a sample of unique allocations will be evaluated, then the predicted powers for rest allocations will be evaluated
 }
   \item{n.sims}{
-The number of trials the user wants to simulate to calculation power (should be greater than 1)
+The number of trials to simulate when calculating the attained power (should be greater than 1)
 }
   \item{seed}{
-A number for set.seed () to reproduce simulation
+A number for set.seed () to enable reproducible simulations
 }
 
 Only available when method = "analytic"
   \item{rep}{
-The number of times analytic formulae should be repeated when K is non-integer. We recommend a number of around 1,000 to reach a stable estimate. Leave at 1 or NULL when the cluster sizes are integers.
+The number of times analytic formulae should be repeated when K is non-integer. We recommend a number of around 1,000 to reach a stable estimate. Leave at 1 or NULL (default) when the cluster sizes are integers.
 }
 }
 \details{
@@ -90,6 +90,7 @@ The number of times analytic formulae should be repeated when K is non-integer. 
 \value{
 Method = "sim"
 
+A list contains following objects:
 \item{coefs}{
 A matrix displays the power, estimated coefficient, standard error for estimated coefficient, treatment-vs-time correlation (TTC), control group size (control.size), treatment group size (trt.size), and absolute treatment group imbalance (TGI) for each evaluated allocation.
 }
@@ -101,6 +102,8 @@ A matrix displays the power, estimated coefficient, standard error for estimated
 \item{allocation}{A matrix of all possible unique allocations}
 
 Method = "analytic"
+
+A list contains following objects:
 \item{attained.power}{Attained power for each unique allocation}
 \item{PREP}{Average of all attained powers using analytic formulae}
 \item{allocation}{A matrix of all possible unique allocations or user-specified allocations}

@@ -549,7 +549,7 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
         con[i] <- mean(temp[[i]]$con)
         int[i] <- mean(temp[[i]]$int)
       }
-      pred.data <- data.frame("power"=pval,"control.size"=con,"trt.size"=int,"SE"=SE,"coefs"=coef)
+      pred.data <- data.frame("attained.power"=pval,"control.size"=con,"trt.size"=int,"SE"=SE,"coefs"=coef)
     }
 
     ### Binary outcomes
@@ -617,7 +617,7 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
         con[i] <- mean(temp[[i]]$con)
         int[i] <- mean(temp[[i]]$int)
       }
-      pred.data <- data.frame("power"=pval,"control.size"=con,"trt.size"=int,"SE"=SE,"coefs"=coef)
+      pred.data <- data.frame("attained.power"=pval,"control.size"=con,"trt.size"=int,"SE"=SE,"coefs"=coef)
     }
 
     ### count outcomes
@@ -680,7 +680,7 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
         con[i] <- mean(temp[[i]]$con)
         int[i] <- mean(temp[[i]]$int)
       }
-      pred.data <- data.frame("power"=pval,"control.size"=con,"trt.size"=int,"SE"=SE,"coefs"=coef)
+      pred.data <- data.frame("attained.power"=pval,"control.size"=con,"trt.size"=int,"SE"=SE,"coefs"=coef)
 
     }
   }
@@ -767,7 +767,7 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
         int[i] <- mean(temp[[i]]$int)
         timecor[i] <- mean(temp[[i]]$cor)
       }
-      pred.data <- data.frame("power"=pval,"control.size"=con,"trt.size"=int,"SE"=SE,"coefs"=coef,"timecor"=timecor)
+      pred.data <- list("attained.power"=pval,"SE"=SE,"coefs"=coef,"TGI"=abs(con-int),"TTC"=timecor)
     }
 
     ### Binary outcomes
@@ -853,7 +853,7 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
         int[i] <- mean(temp[[i]]$int)
         timecor[i] <- mean(temp[[i]]$cor)
       }
-      pred.data <- data.frame("power"=pval,"control.size"=con,"trt.size"=int,"SE"=SE,"coefs"=coef,"timecor"=timecor)
+      pred.data <- list("attained.power"=pval,"SE"=SE,"coefs"=coef,"TGI"=abs(con-int),"TTC"=timecor)
     }
 
     ### count outcomes
@@ -937,7 +937,7 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
         int[i] <- mean(temp[[i]]$int)
         timecor[i] <- mean(temp[[i]]$cor)
       }
-      pred.data <- data.frame("power"=pval,"control.size"=con,"trt.size"=int,"SE"=SE,"coefs"=coef,"timecor"=timecor)
+      pred.data <- list("attained.power"=pval,"SE"=SE,"coefs"=coef,"TGI"=abs(con-int),"TTC"=timecor)
     }
   }
   return(pred.data)
@@ -3299,6 +3299,7 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = F,
                         design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
     res$PREP.CV <- NULL
+    res$allocations <- NULL
 
   }
   if (method == "sim"){
@@ -3323,6 +3324,7 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot =F,
                         design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
     res1$PREP.CV <- NULL
+    res1$allocations <- NULL
   }
   if(method =="both") {return(list(simres = res, analyticres = res1))} else {return(res)}
 }
