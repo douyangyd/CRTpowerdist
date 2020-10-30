@@ -87,7 +87,7 @@ Method = "sim"
 A list contains following objects:
 \item{attained.power}{Attained power for evaluated allocation(s)}
 \item{SE}{The average standard error for estimated treatment coefficients}
-\item{coefs}{The average of the treatment effect coefficients}
+\item{trt.estimate}{The average of the treatment effect coefficients}
 \item{TGI}{Absolute treatment group imbalance for evaluated allocation(s)}
 \item{TTC}{Treatment-vs-time correlation for evaluated allocation(s)}
 
