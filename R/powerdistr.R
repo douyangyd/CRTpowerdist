@@ -220,14 +220,14 @@ DesignMatrix <- function(I, J, P, K, S, factor.time = FALSE, user.allocs = NULL,
   if (design == "pcrt"){
 
     if(!all(K >= 1)){warning("Some clusters have size < 1 and may be empty with no observations", immediate. = T)}
-
-    size <- c()
-    for (i in 1:length(K)){
-      size[i] <- sample(c(floor(K[i]),floor(K[i])+1),
-                        prob= c(1-(K[i]-floor(K[i])),
-                                (K[i]-floor(K[i]))),
-                        1, replace=T)
-    }
+    size <- K
+    #size <- c()
+    #for (i in 1:length(K)){
+    #  size[i] <- sample(c(floor(K[i]),floor(K[i])+1),
+    #                    prob= c(1-(K[i]-floor(K[i])),
+    #                            (K[i]-floor(K[i]))),
+    #                    1, replace=T)
+    #}
 
 
     XMat <- lapply(1:nrow(allocs), FUN = function(ii) {
@@ -245,24 +245,30 @@ DesignMatrix <- function(I, J, P, K, S, factor.time = FALSE, user.allocs = NULL,
 
 
   if (design == "sw"){
-    K = K * (J + 1)
+    #size = K * (J+1)
+    size = K
     if(!all(K >= 1)){warning("Some clusters have size < 1 and may be empty with no observations", immediate. = T)}
 
-    size <- c()
-    for (i in 1:length(K)){
-      size[i] <- sample(c(floor(K[i]),floor(K[i])+1),
-                        prob= c(1-(K[i]-floor(K[i])),
-                                (K[i]-floor(K[i]))),
-                        1, replace=T)
-    }
+    #for (i in 1:length(K)){
+    #  size[i] <- sample(c(floor(K[i]),floor(K[i])+1),
+    #                    prob= c(1-(K[i]-floor(K[i])),
+    #                            (K[i]-floor(K[i]))),
+    #                    1, replace=T)
+    #}
 
-    if(all(floor(K / (J + 1)) == K / (J + 1))){
-      Period <- unlist(lapply(1:length(size), FUN= function(jj){
-        rep(0:J,each=size[jj]/(J+1),replace = T)}))
-    } else {
-      Period <- unlist(lapply(1:length(size), FUN= function(jj){
-        sample(0:J,size[jj],replace = T)}))
-    }
+      #Period <- unlist(lapply(1:length(K), FUN= function(jj){
+      #  rep(0:J,each=K[jj],replace = T)}))
+
+    Period <- unlist(lapply(1:length(K), FUN= function(jj){
+        1:K[jj] %% (J+1)}))
+
+    #if(all(floor(K / (J + 1)) == K / (J + 1))){
+    #  Period <- unlist(lapply(1:length(size), FUN= function(jj){
+    #    rep(0:J,each=size[jj]/(J+1),replace = T)}))
+    #} else {
+    #  Period <- unlist(lapply(1:length(size), FUN= function(jj){
+    #    sample(0:J,size[jj],replace = T)}))
+    #}
 
     # Cluster <- unlist(sapply(1:sum(I), function(kk) {
     #   rep(kk, size[kk])
@@ -501,7 +507,7 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
                          prob= c(1-(K[i]-floor(K[i])),
                                  (K[i]-floor(K[i]))),
                          1, replace=T)
-          clus.size.list <- c(clus.size.list,temp)}
+         clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
         size <- sum(clus.size.list)
         period <- rep(1, size) #not used in pcrt
@@ -688,20 +694,21 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
   ### SW design
   if (design == "sw") {
     J <- length(P)
-    K <- K*(J+1)
+    K <- K
     ### Gaussian outcomes
     if (family == "gaussian") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- c()
-        for (i in 1:length(K)){
-          temp <- sample(c(floor(K[i]),floor(K[i])+1),
-                         prob= c(1-(K[i]-floor(K[i])),
-                                 (K[i]-floor(K[i]))),
-                         1, replace=T)
-          clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- K
+        #clus.size.list <- c()
+        #for (i in 1:length(K)){
+        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
+        #                 prob= c(1-(K[i]-floor(K[i])),
+        #                         (K[i]-floor(K[i]))),
+        #                 1, replace=T)
+        #  clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
-        period <- unlist(lapply(1:length(clus.size.list), FUN= function(i){
-          sample(0:J,clus.size.list[i],replace = T)}))
+        period <- unlist(lapply(1:length(K), FUN= function(i){
+          1:K[i] %% (length(P)+1)}))
         size <- sum(clus.size.list)
         if (is.null(Time.effect)) {
           Time.effect <- 0
@@ -774,16 +781,17 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
     if (family == "binomial") {
       mu1 <- Tx.effect * (mu0/(1 - mu0))/(1 + Tx.effect * (mu0/(1 - mu0)))
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- c()
-        for (i in 1:length(K)){
-          temp <- sample(c(floor(K[i]),floor(K[i])+1),
-                         prob= c(1-(K[i]-floor(K[i])),
-                                 (K[i]-floor(K[i]))),
-                         1, replace=T)
-          clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- K
+        #clus.size.list <- c()
+        #for (i in 1:length(K)){
+        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
+        #                 prob= c(1-(K[i]-floor(K[i])),
+        #                         (K[i]-floor(K[i]))),
+        #                 1, replace=T)
+        #  clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
-        period <- unlist(lapply(1:length(clus.size.list), FUN= function(i){
-          sample(0:J,clus.size.list[i],replace = T)}))
+        period <- unlist(lapply(1:length(K), FUN= function(i){
+          1:K[i] %% (length(P)+1)}))
         size <- sum(clus.size.list )
         clus.id <- rep(1:sum(I), clus.size.list )
         b0 <- log(mu0/(1 - mu0))
@@ -860,17 +868,18 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
     if (family == "poisson") {
       mu1 <- mu0 * Tx.effect
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- c()
-        for (i in 1:length(K)){
-          temp <- sample(c(floor(K[i]),floor(K[i])+1),
-                         prob= c(1-(K[i]-floor(K[i])),
-                                 (K[i]-floor(K[i]))),
-                         1, replace=T)
-          clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- K
+        #clus.size.list <- c()
+        #for (i in 1:length(K)){
+        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
+        #                 prob= c(1-(K[i]-floor(K[i])),
+        #                         (K[i]-floor(K[i]))),
+        #                 1, replace=T)
+        #  clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
-        period <- unlist(lapply(1:length(clus.size.list), FUN= function(i){
-          sample(0:J,clus.size.list[i],replace = T)}))
-        size <- sum(clus.size.list )
+        period <- unlist(lapply(1:length(K), FUN= function(i){
+          1:K[i] %% (length(P)+1)}))
+        size <- sum(clus.size.list)
         clus.id <- rep(1:sum(I), clus.size.list )
         b0 <- log(mu0)
         b1 <- log(Tx.effect)
@@ -941,6 +950,10 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
     }
   }
   return(pred.data)
+  #return(list(results = pred.data, input = list(I = I, P = P, K = K, user.allocs = user.allocs, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, factor.time = factor.time,
+  #                                              design = design, n.sims = n.sims, rho = rho,
+  #                                              sigma.e = sigma.e, sigma.a = sigma.a, sig.level = sig.level,
+  #                                              family = family)))
 }
 
 sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = FALSE,
@@ -1274,7 +1287,7 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
 
   if (design == "sw") {
     J <- length(P)
-    K <- K*(J+1)
+    K <- K
     if ((sum(I)/J)%%1 != 0) {
       stop("clusters cannot be evenly distributed into periods")
     }
@@ -1319,16 +1332,17 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
     ### Gaussian outcomes
     if (family == "gaussian") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- c()
-        for (i in 1:length(K)){
-          temp <- sample(c(floor(K[i]),floor(K[i])+1),
-                         prob= c(1-(K[i]-floor(K[i])),
-                                 (K[i]-floor(K[i]))),
-                         1, replace=T)
-          clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- K
+        #clus.size.list <- c()
+        #for (i in 1:length(K)){
+        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
+        #                 prob= c(1-(K[i]-floor(K[i])),
+        #                         (K[i]-floor(K[i]))),
+        #                 1, replace=T)
+        #  clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
-        period <- unlist(lapply(1:length(clus.size.list), FUN= function(i){
-          sample(0:J,clus.size.list[i],replace = T)}))
+        period <- unlist(lapply(1:length(K), FUN= function(i){
+          1:K[i] %% (length(P)+1)}))
         size <- sum(clus.size.list )
         if (is.null(Time.effect)) {
           Time.effect <- 0
@@ -1400,16 +1414,17 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
     ### Binary outcomes
     if (family == "binomial") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- c()
-        for (i in 1:length(K)){
-          temp <- sample(c(floor(K[i]),floor(K[i])+1),
-                         prob= c(1-(K[i]-floor(K[i])),
-                                 (K[i]-floor(K[i]))),
-                         1, replace=T)
-          clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- K
+        #clus.size.list <- c()
+        #for (i in 1:length(K)){
+        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
+        #                 prob= c(1-(K[i]-floor(K[i])),
+        #                         (K[i]-floor(K[i]))),
+        #                 1, replace=T)
+        #  clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
-        period <- unlist(lapply(1:length(clus.size.list), FUN= function(i){
-          sample(0:J,clus.size.list[i],replace = T)}))
+        period <- unlist(lapply(1:length(K), FUN= function(i){
+          1:K[i] %% (length(P)+1)}))
         size <- sum(clus.size.list )
         clus.id <- rep(1:sum(I), clus.size.list )
         b0 <- log(mu0/(1 - mu0))
@@ -1485,16 +1500,17 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
     ### count outcomes
     if (family == "poisson") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- c()
-        for (i in 1:length(K)){
-          temp <- sample(c(floor(K[i]),floor(K[i])+1),
-                         prob= c(1-(K[i]-floor(K[i])),
-                                 (K[i]-floor(K[i]))),
-                         1, replace=T)
-          clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- K
+        #clus.size.list <- c()
+        #for (i in 1:length(K)){
+        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
+        #                 prob= c(1-(K[i]-floor(K[i])),
+        #                         (K[i]-floor(K[i]))),
+        #                 1, replace=T)
+        #  clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
-        period <- unlist(lapply(1:length(clus.size.list), FUN= function(i){
-          sample(0:J,clus.size.list[i],replace = T)}))
+        period <- unlist(lapply(1:length(K), FUN= function(i){
+          1:K[i] %% (length(P)+1)}))
         size <- sum(clus.size.list )
         clus.id <- rep(1:sum(I), clus.size.list )
         b0 <- log(mu0)
@@ -1568,7 +1584,7 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
   if (pred.power == TRUE) {
     if(all(floor(K) == K)){
       period <- unlist(lapply(1:length(K), FUN= function(i){
-        sample(0:J,K[i],replace = T)}))
+        1:K[i] %% (length(P)+1)}))
       Tx <- lapply(1:nrow(unsample.allocs), FUN = function(i) {
         temp.allocs <- rep(unsample.allocs[i, ], K)
       })
@@ -1983,7 +1999,7 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
     }
   }
   if(design == "sw"){
-  K <- K*(J+1)
+  K <- K
   all.ordwgh <- all_allocs_strat(I, P, S, K)
   allocs <- all.ordwgh$order
   wgh <- all.ordwgh$weights
@@ -2010,16 +2026,17 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
   ### Gaussian outcomes
   if (family == "gaussian") {
     data <- foreach(iterators::icount(n.sims)) %dorng% {
-      clus.size.list <- c()
-      for (i in 1:length(K)){
-        temp <- sample(c(floor(K[i]),floor(K[i])+1),
-                       prob= c(1-(K[i]-floor(K[i])),
-                               (K[i]-floor(K[i]))),
-                       1, replace=T)
-        clus.size.list <- c(clus.size.list,temp)}
+      clus.size.list <- K
+      #clus.size.list <- c()
+      #for (i in 1:length(K)){
+      #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
+      #                 prob= c(1-(K[i]-floor(K[i])),
+      #                         (K[i]-floor(K[i]))),
+      #                 1, replace=T)
+      #  clus.size.list <- c(clus.size.list,temp)}
       ### convert cluster size per period as a vector
-      period <- unlist(lapply(1:length(clus.size.list), FUN= function(i){
-        sample(0:J,clus.size.list[i],replace = T)}))
+      period <- unlist(lapply(1:length(K), FUN= function(i){
+        1:K[i] %% (length(P[[1]])+1)}))
       size <- sum(clus.size.list )
       if (is.null(Time.effect)) {
         Time.effect <- 0
@@ -2090,16 +2107,17 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
   ### Binary outcomes
   if (family == "binomial") {
     data <- foreach(iterators::icount(n.sims)) %dorng% {
-      clus.size.list <- c()
-      for (i in 1:length(K)){
-        temp <- sample(c(floor(K[i]),floor(K[i])+1),
-                       prob= c(1-(K[i]-floor(K[i])),
-                               (K[i]-floor(K[i]))),
-                       1, replace=T)
-        clus.size.list <- c(clus.size.list,temp)}
+      clus.size.list <- K
+      #clus.size.list <- c()
+      #for (i in 1:length(K)){
+      #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
+      #                 prob= c(1-(K[i]-floor(K[i])),
+      #                         (K[i]-floor(K[i]))),
+      #                 1, replace=T)
+      #  clus.size.list <- c(clus.size.list,temp)}
       ### convert cluster size per period as a vector
-      period <- unlist(lapply(1:length(clus.size.list), FUN= function(i){
-        sample(0:J,clus.size.list[i],replace = T)}))
+      period <- unlist(lapply(1:length(K), FUN= function(i){
+        1:K[i] %% (length(P[[1]])+1)}))
       size <- sum(clus.size.list )
       clus.id <- rep(1:sum(I), clus.size.list )
       b0 <- log(mu0/(1 - mu0))
@@ -2174,16 +2192,17 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
   ### count outcomes
   if (family == "poisson") {
     data <- foreach(iterators::icount(n.sims)) %dorng% {
-      clus.size.list <- c()
-      for (i in 1:length(K)){
-        temp <- sample(c(floor(K[i]),floor(K[i])+1),
-                       prob= c(1-(K[i]-floor(K[i])),
-                               (K[i]-floor(K[i]))),
-                       1, replace=T)
-        clus.size.list <- c(clus.size.list,temp)}
+      clus.size.list <- K
+      #clus.size.list <- c()
+      #for (i in 1:length(K)){
+      #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
+      #                 prob= c(1-(K[i]-floor(K[i])),
+      #                         (K[i]-floor(K[i]))),
+      #                 1, replace=T)
+      #  clus.size.list <- c(clus.size.list,temp)}
       ### convert cluster size per period as a vector
-      period <- unlist(lapply(1:length(clus.size.list), FUN= function(i){
-        sample(0:J,clus.size.list[i],replace = T)}))
+      period <- unlist(lapply(1:length(K), FUN= function(i){
+        1:K[i] %% (length(P[[1]])+1)}))
       size <- sum(clus.size.list )
       clus.id <- rep(1:sum(I), clus.size.list )
       b0 <- log(mu0)
@@ -2257,7 +2276,7 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
   if (pred.power == TRUE) {
     if(all(floor(K) == K)){
       period <- unlist(lapply(1:length(K), FUN= function(i){
-        sample(0:J,K[i],replace = T)}))
+        1:K[i] %% (length(P)+1)}))
       Tx <- lapply(1:nrow(unsample.allocs), FUN = function(i) {
         temp.allocs <- rep(unsample.allocs[i, ], K)
       })
@@ -2336,7 +2355,7 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
     }
     wgt.power <- sum(pred.data$power * (sample.weight/(sum(sample.weight))))
   }
-  if (pred.power == T){
+  if (pred.power == TRUE){
     final.data <- data.frame(weight = c(wgh[index], wgh[-index]),
                              power = c(pred.data$power, pred.value))}
   else {
@@ -2607,25 +2626,26 @@ siglevel <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = 
   ### SW design
   if (design == "sw") {
     J <- length(P)
-    K <- K*(J+1)
+    K <- K
     ### Gaussian outcomes
     if (family == "gaussian") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- c()
-        for (i in 1:length(K)){
-          temp <- sample(c(floor(K[i]),floor(K[i])+1),
-                         prob= c(1-(K[i]-floor(K[i])),
-                                 (K[i]-floor(K[i]))),
-                         1, replace=T)
-          clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- K
+        #clus.size.list <- c()
+        #for (i in 1:length(K)){
+        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
+        #                 prob= c(1-(K[i]-floor(K[i])),
+        #                         (K[i]-floor(K[i]))),
+        #                 1, replace=T)
+        #  clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
-        period <- unlist(lapply(1:length(clus.size.list), FUN= function(i){
-          sample(0:J,clus.size.list[i],replace = T)}))
-        size <- sum(clus.size.list )
+        period <- unlist(lapply(1:length(K), FUN= function(i){
+          1:K[i] %% (length(P)+1)}))
+        size <- sum(clus.size.list)
         if (is.null(Time.effect)){
           Time.effect <- 0
         } else Time.effect <- Time.effect
-        clus.id <- rep(1:sum(I), clus.size.list )
+        clus.id <- rep(1:sum(I), clus.size.list)
         clus.mean <- rep(rnorm(sum(I), sd = sigma.a), clus.size.list)
         error.y = rnorm(sum(clus.size.list), sd = sigma.e)
         if (length(Time.effect)>1){
@@ -2682,16 +2702,17 @@ siglevel <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = 
     ### Binary outcomes
     if (family == "binomial") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- c()
-        for (i in 1:length(K)){
-          temp <- sample(c(floor(K[i]),floor(K[i])+1),
-                         prob= c(1-(K[i]-floor(K[i])),
-                                 (K[i]-floor(K[i]))),
-                         1, replace=T)
-          clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- K
+        #clus.size.list <- c()
+        #for (i in 1:length(K)){
+        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
+        #                 prob= c(1-(K[i]-floor(K[i])),
+        #                         (K[i]-floor(K[i]))),
+        #                 1, replace=T)
+        #  clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
-        period <- unlist(lapply(1:length(clus.size.list), FUN= function(i){
-          sample(0:J,clus.size.list[i],replace = T)}))
+        period <- unlist(lapply(1:length(K), FUN= function(i){
+          1:K[i] %% (length(P)+1)}))
         size <- sum(clus.size.list )
         clus.id <- rep(1:sum(I), clus.size.list )
         b0 <- log(mu0/(1 - mu0))
@@ -2755,16 +2776,17 @@ siglevel <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = 
     ### count outcomes
     if (family == "poisson") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- c()
-        for (i in 1:length(K)){
-          temp <- sample(c(floor(K[i]),floor(K[i])+1),
-                         prob= c(1-(K[i]-floor(K[i])),
-                                 (K[i]-floor(K[i]))),
-                         1, replace=T)
-          clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- K
+        #clus.size.list <- c()
+        #for (i in 1:length(K)){
+        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
+        #                 prob= c(1-(K[i]-floor(K[i])),
+        #                         (K[i]-floor(K[i]))),
+        #                 1, replace=T)
+        #  clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
-        period <- unlist(lapply(1:length(clus.size.list), FUN= function(i){
-          sample(0:J,clus.size.list[i],replace = T)}))
+        period <- unlist(lapply(1:length(K), FUN= function(i){
+          1:K[i] %% (length(P)+1)}))
         size <- sum(clus.size.list)
         clus.id <- rep(1:sum(I), clus.size.list)
         b0 <- log(mu0)
@@ -2829,7 +2851,7 @@ siglevel <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = 
 ### Formula based calculation
 analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr.thrd = NULL, factor.time = FALSE,
                         mu0, Tx.effect, Time.effect = NULL, rho = NULL, family, design, sig.level = 0.05, plot= TRUE,
-                        sigma.e = NULL, sigma.a = NULL, rep = NULL) {
+                        sigma.e = NULL, sigma.a = NULL) {
   # I = vector of cluster types P = # of clusters at each step (excluding
   # baseline) K = vector of cluster sizes factor.time = logical; for
   # whether time should be considered a factor rho = ICC mu0 = baseline
@@ -2862,11 +2884,13 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
     meesage("Parallel CRT design usually has no time effect")
   }
 
+  rep = 1
 
-  if (is.null(rep)) {
-    if(!all(K == floor(K))) stop("'rep' should be specified for non-integer sizes")
-    else rep = 1
-  } else if(all(K == floor(K)) & rep > 1) warning("'rep' can be set to 0 or 'NULL' for integer cluster sizes for speedier calculations", immediate. = T)
+  ### old development
+  #if (is.null(rep)) {
+  #  if(!all(K == floor(K))) stop("'rep' should be specified for non-integer sizes")
+  #  else rep = 1
+  #} else if(all(K == floor(K)) & rep > 1) warning("'rep' can be set to 0 or 'NULL' for integer cluster sizes for speedier calculations", immediate. = T)
 
   # sanity checks for stratified randomization
   if (!is.null(S)) {
@@ -3044,10 +3068,11 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
 
   if (design == "sw") {
     if (is.list(P)){np <- length(P[[1]])} else {np <- length(P)}
+    K_per <- K / (np+1)
     ncpp <- round(sum(I)/np) # number of cluster per period
-    CV <- sd(K*(np+1))/mean(K*(np+1))
-    tol <- sum(K*(np+1)) ### total size
-    m <- mean(K)
+    CV <- sd(K_per*(np+1))/mean(K_per*(np+1))
+    tol <- sum(K_per*(np+1)) ### total size
+    m <- mean(K_per)
 
     DE_C <- 1+(m*(1+CV^2)-1)*rho
     r <- (m*(1+CV^2)*rho)/DE_C
@@ -3067,120 +3092,118 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
       power.CV <- pnorm(sqrt(np*m*ncpp*(ses^2)/(4*DE_C*DE_R))-qnorm(1-sig.level/2))
     }
 
-    power.rep <- foreach(iterators::icount(rep), .packages = c("arrangements", "Matrix") , .export = c("rand", "multi", "alloc1", "freq", "DesignMatrix", "all_allocs", "all_allocs_strat"), .combine = rbind ) %dorng% {
-      # generate design matrices for all unique allocations
-      Design_out <- DesignMatrix(I = I, J = J, P = P, K = K, S = S, strat = strat, factor.time = factor.time, user.allocs = user.allocs, design = design)
+      power.rep <- foreach(iterators::icount(rep), .packages = c("arrangements", "Matrix") , .export = c("rand", "multi", "alloc1", "freq", "DesignMatrix", "all_allocs", "all_allocs_strat"), .combine = rbind ) %dorng% {
+        # generate design matrices for all unique allocations
+        Design_out <- DesignMatrix(I = I, J = J, P = P, K = K, S = S, strat = strat, factor.time = factor.time, user.allocs = user.allocs, design = design)
 
-      XMat = Design_out$XMat
-      size = Design_out$size
+        XMat = Design_out$XMat
+        size = Design_out$size
 
 
-      if (family == "gaussian") {
-        Ve <- diag(1, nrow = sum(size))
+        if (family == "gaussian") {
+          Ve <- diag(1, nrow = sum(size))
 
-        Vclus <- lapply(1:sum(I), FUN = function(clus) {
-          matrix(1, nrow = size[clus], ncol = size[clus])
-        })
-        Vclus <- bdiag(Vclus)
-        VV <- as.matrix(sigma.e^2 * Ve + sigma.a^2 * Vclus)
+          Vclus <- lapply(1:sum(I), FUN = function(clus) {
+            matrix(1, nrow = size[clus], ncol = size[clus])
+          })
+          Vclus <- bdiag(Vclus)
+          VV <- as.matrix(sigma.e^2 * Ve + sigma.a^2 * Vclus)
 
-        # power calculation
-        power <- sapply(XMat, FUN = function(XMat_i) {
-          VarTx <- solve(t(XMat_i) %*% solve(VV) %*% XMat_i)[1, 1]
-          pnorm(Tx.effect/sqrt(VarTx) - qnorm(1 - sig.level/2), lower.tail = T) +
-            pnorm(-Tx.effect/sqrt(VarTx) - qnorm(1 - sig.level/2),
-                  lower.tail = T)
-        })
+          # power calculation
+          power <- sapply(XMat, FUN = function(XMat_i) {
+            VarTx <- solve(t(XMat_i) %*% solve(VV) %*% XMat_i)[1, 1]
+            pnorm(Tx.effect/sqrt(VarTx) - qnorm(1 - sig.level/2), lower.tail = T) +
+              pnorm(-Tx.effect/sqrt(VarTx) - qnorm(1 - sig.level/2),
+                    lower.tail = T)
+          })
 
-      }
-      if (family == "binomial") {
-        # only AML has been implemented for binary outcome
-        b0 <- log(mu0/(1 - mu0)) # baseline risk
-        b1 <- log(Tx.effect) # log(OR)
+        }
+        if (family == "binomial") {
+          # only AML has been implemented for binary outcome
+          b0 <- log(mu0/(1 - mu0)) # baseline risk
+          b1 <- log(Tx.effect) # log(OR)
 
-        if (is.null(Time.effect)) # if Time.effect is not specified:
-          if (factor.time) b2 <- 0 * b1 * c(1:J) else # when time is categorical, default values are equivalent to continuous time ???
-            b2 <- 0 * b1 # default is half of treatment effect when time is continuous
+          if (is.null(Time.effect)) # if Time.effect is not specified:
+            if (factor.time) b2 <- 0 * b1 * c(1:J) else # when time is categorical, default values are equivalent to continuous time ???
+              b2 <- 0 * b1 # default is half of treatment effect when time is continuous
 
-        else { # f Time.effect is specified:
-          if (factor.time) {
-            if (length(Time.effect) != (J)) stop("length of Time.effect should match the number of transition steps")
-          } else {
-            if (length(Time.effect) != 1) stop("Time.effect should have length 1 when time is a continuous covariate")
+          else { # f Time.effect is specified:
+            if (factor.time) {
+              if (length(Time.effect) != (J)) stop("length of Time.effect should match the number of transition steps")
+            } else {
+              if (length(Time.effect) != 1) stop("Time.effect should have length 1 when time is a continuous covariate")
+            }
+            b2 <- Time.effect
           }
-          b2 <- Time.effect
+
+          power <- sapply(XMat, FUN = function(XMat_i) {
+            vec_pi <- as.vector(1 + exp(-(XMat_i %*% c(b1, b0, b2))))^(-1)
+            clus.id <- split(1:sum(size), rep(1:sum(I), size))
+
+            FIM <- lapply(1:sum(I), FUN = function(ii) {
+              VClus <- matrix(1, nrow = size[ii], ncol = size[ii])
+              WWi_inv <- solve(diag(vec_pi[clus.id[[ii]]] * (1 - vec_pi[clus.id[[ii]]])))
+              VV <- WWi_inv + sigma.a^2 * VClus
+              t(XMat_i[clus.id[[ii]], ]) %*% solve(VV) %*% XMat_i[clus.id[[ii]],
+                                                                  ]
+            })
+            FIM <- Reduce("+", FIM)
+
+            VarTx <- solve(FIM)[1, 1]
+
+            pnorm(b1/sqrt(VarTx) - qnorm(1 - sig.level/2), lower.tail = T) +
+              pnorm(-b1/sqrt(VarTx) - qnorm(1 - sig.level/2), lower.tail = T)
+          })
+
+        }
+        if (family == "poisson") {
+
+
+          # only AML has been implemented for count outcome
+
+          b0 <- log(mu0) # baseline rate
+
+          b1 <- log(Tx.effect) # log(RR)
+
+          if (is.null(Time.effect)) # if Time.effect is not specified:
+            if (factor.time) b2 <- 0 * c(1:J) else # when time is categorical, default is ???
+              b2 <- 0 * b1 # default is half of treatment effect when time is continuous
+
+          else { # f Time.effect is specified:
+            if (factor.time) {
+              if (length(Time.effect) != (J)) stop("length of 'Time.effect should match the number of transition steps")
+            } else {
+              if (length(Time.effect) != 1) stop("Time.effect should have length 1 when time is a continuous covariate")
+            }
+            b2 <- Time.effect
+          }
+
+          power <- sapply(XMat, FUN = function(XMat_i) {
+            vec_lambda <- as.vector(exp(XMat_i %*% c(b1, b0, b2)))
+            clus.id <- split(1:sum(size), rep(1:sum(I), size))
+
+            FIM <- lapply(1:sum(I), FUN = function(ii) {
+              VClus <- matrix(1, nrow = size[ii], ncol = size[ii])
+              WWi_inv <- solve(diag(vec_lambda[clus.id[[ii]]]))
+              VV <- WWi_inv + sigma.a^2 * VClus
+              t(XMat_i[clus.id[[ii]], ]) %*% solve(VV) %*% XMat_i[clus.id[[ii]],
+                                                                  ]
+            })
+            FIM <- Reduce("+", FIM)
+
+            VarTx <- solve(FIM)[1, 1]
+
+            pnorm(b1/sqrt(VarTx) - qnorm(1 - sig.level/2), lower.tail = T) +
+              pnorm(-b1/sqrt(VarTx) - qnorm(1 - sig.level/2), lower.tail = T)
+          })
         }
 
-        power <- sapply(XMat, FUN = function(XMat_i) {
-          vec_pi <- as.vector(1 + exp(-(XMat_i %*% c(b1, b0, b2))))^(-1)
-          clus.id <- split(1:sum(size), rep(1:sum(I), size))
-
-          FIM <- lapply(1:sum(I), FUN = function(ii) {
-            VClus <- matrix(1, nrow = size[ii], ncol = size[ii])
-            WWi_inv <- solve(diag(vec_pi[clus.id[[ii]]] * (1 - vec_pi[clus.id[[ii]]])))
-            VV <- WWi_inv + sigma.a^2 * VClus
-            t(XMat_i[clus.id[[ii]], ]) %*% solve(VV) %*% XMat_i[clus.id[[ii]],
-            ]
-          })
-          FIM <- Reduce("+", FIM)
-
-          VarTx <- solve(FIM)[1, 1]
-
-          pnorm(b1/sqrt(VarTx) - qnorm(1 - sig.level/2), lower.tail = T) +
-            pnorm(-b1/sqrt(VarTx) - qnorm(1 - sig.level/2), lower.tail = T)
-        })
+        power
 
       }
-      if (family == "poisson") {
-
-
-        # only AML has been implemented for count outcome
-
-        b0 <- log(mu0) # baseline rate
-
-        b1 <- log(Tx.effect) # log(RR)
-
-        if (is.null(Time.effect)) # if Time.effect is not specified:
-          if (factor.time) b2 <- 0 * c(1:J) else # when time is categorical, default is ???
-          b2 <- 0 * b1 # default is half of treatment effect when time is continuous
-
-        else { # f Time.effect is specified:
-          if (factor.time) {
-            if (length(Time.effect) != (J)) stop("length of 'Time.effect should match the number of transition steps")
-          } else {
-            if (length(Time.effect) != 1) stop("Time.effect should have length 1 when time is a continuous covariate")
-          }
-          b2 <- Time.effect
-        }
-
-        power <- sapply(XMat, FUN = function(XMat_i) {
-          vec_lambda <- as.vector(exp(XMat_i %*% c(b1, b0, b2)))
-          clus.id <- split(1:sum(size), rep(1:sum(I), size))
-
-          FIM <- lapply(1:sum(I), FUN = function(ii) {
-            VClus <- matrix(1, nrow = size[ii], ncol = size[ii])
-            WWi_inv <- solve(diag(vec_lambda[clus.id[[ii]]]))
-            VV <- WWi_inv + sigma.a^2 * VClus
-            t(XMat_i[clus.id[[ii]], ]) %*% solve(VV) %*% XMat_i[clus.id[[ii]],
-            ]
-          })
-          FIM <- Reduce("+", FIM)
-
-          VarTx <- solve(FIM)[1, 1]
-
-          pnorm(b1/sqrt(VarTx) - qnorm(1 - sig.level/2), lower.tail = T) +
-            pnorm(-b1/sqrt(VarTx) - qnorm(1 - sig.level/2), lower.tail = T)
-        })
-      }
-
-      power
-
-    }
-
-
   }
 
-  if(rep==1 || is.null(rep)){power.rep = matrix(power.rep, nrow=1) }
+  power.rep = matrix(power.rep, nrow=1)
 
   power.mean = apply(power.rep, 2, mean)
   if (is.null(user.allocs)){
@@ -3202,7 +3225,7 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
     }
     if (plot == TRUE){
       print(ggplot(final.data, aes(x = power, y = ..density.., weight = weight)) +
-              geom_histogram(binwidth = 0.01, fill = "blue") + ggtitle("Power distribution"))
+              geom_histogram(binwidth = 0.01, fill = "blue") + ggtitle("Power distribution (Analytic-based)"))
     }
   } else {
     allocs <- user.allocs
@@ -3230,17 +3253,17 @@ analytic.pd <- compiler::cmpfun(analytic.pd)
 power.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = TRUE,
                      design, rho = NULL, family, sig.level = 0.05,
                      sigma.e = NULL, sigma.a = NULL, method = "analytic",
-                     plot = FALSE, gen.all = TRUE, n.allocs,  n.sims, seed = NULL,
-                      rep = NULL){
+                     plot = FALSE, gen.all = TRUE, n.allocs,  n.sims, seed = NULL){
   n.cores <- parallel::detectCores()
   doParallel::registerDoParallel(cores=n.cores-1)
   if (!is.null(seed)){
     set.seed(seed)
   }
   if (method == "analytic"){
+    gen.all = NULL; n.allocs = NULL;  n.sims = NULL
     res <- analytic.pd (I = I, P = P, K = K, pwr.thrd = pwr.thrd, factor.time = factor.time,
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = plot,
-                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
+                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a)
 
   }
   if (method == "sim"){
@@ -3250,13 +3273,16 @@ power.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NUL
                    family = family)
   }
   if (method == "both"){
+
     res <- sim.pd (I = I, P = P, K = K, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, pwr.thrd = pwr.thrd, factor.time = factor.time,
                    design = design, gen.all = gen.all, n.allocs = n.allocs,  n.sims = n.sims, rho = rho,
                    sigma.e = sigma.e, sigma.a = sigma.a, print.allocs = TRUE, plot = plot, sig.level = sig.level,
                    family = family)
+
     res1 <- analytic.pd (I = I, P = P, K = K, user.allocs = res$allocation, pwr.thrd = pwr.thrd, factor.time = factor.time,
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = plot,
-                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
+                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a)
+
     allocs <- res$allocation
     wgh <- res$weights
     final.data <- data.frame(weight = c(wgh),
@@ -3268,7 +3294,14 @@ power.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NUL
     }
     res1$risk <- risk
   }
-  if(method =="both") {return(list(simres = res, analyticres = res1))} else {return(res)}
+  if(method =="both") {return(list(results = list(simres = res, analyticres = res1), inputs = list(I = I, P = P, K = K, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, pwr.thrd = pwr.thrd, factor.time = factor.time,
+                                                                                                   design = design, gen.all = gen.all, n.allocs = n.allocs,  n.sims = n.sims, rho = rho,
+                                                                                                   sigma.e = sigma.e, sigma.a = sigma.a, plot = plot, sig.level = sig.level,
+                                                                                                   family = family)))} else {return(list(results = res, inputs = list(I = I, P = P, K = K, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, pwr.thrd = pwr.thrd, factor.time = factor.time,
+                                                                                                                                                                      design = design, gen.all = gen.all, n.allocs = n.allocs,  n.sims = n.sims, rho = rho,
+                                                                                                                                                                      sigma.e = sigma.e, sigma.a = sigma.a, plot = plot, sig.level = sig.level,
+                                                                                                                                                                      family = family)))}
+
 }
 
 
@@ -3276,8 +3309,7 @@ power.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NUL
 power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs , factor.time = TRUE,
                      family, design, rho = NULL, sigma.e = NULL, sigma.a = NULL, sig.level = 0.05,
                      method = "analytic", adj.pwr=FALSE,
-                     seed = NULL, n.sims,
-                      rep = NULL){
+                     seed = NULL, n.sims = 1000){
   n.cores <- parallel::detectCores()
   doParallel::registerDoParallel(cores=n.cores-1)
   if (adj.pwr == TRUE){
@@ -3292,12 +3324,13 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
     sig <- temp
   } else {sig <- sig.level}
   if (method == "analytic"){
+    n.sims = NULL
     if (!is.null(seed)){
       set.seed(seed)
     }
     res <- analytic.pd (I = I, P = P, K = K, user.allocs = user.allocs, pwr.thrd = pwr.thrd, factor.time = factor.time,
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = F,
-                        design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
+                        design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a)
     res$PREP.CV <- NULL
     res$allocations <- NULL
     res$risk <- NULL
@@ -3322,13 +3355,19 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
                    sigma.e = sigma.e, sigma.a = sigma.a, sig.level = sig,
                    family = family)
     res1 <- analytic.pd (I = I, P = P, K = K, user.allocs = user.allocs, pwr.thrd = pwr.thrd, factor.time = factor.time,
-                        mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot =F,
-                        design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
+                        mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = F,
+                        design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a)
     res1$PREP.CV <- NULL
     res1$allocations <- NULL
     res1$risk <- NULL
   }
-  if(method =="both") {return(list(simres = res, analyticres = res1))} else {return(res)}
+  if(method =="both") {return(list(results = list(simres = res, analyticres = res1), inputs = list(I = I, P = P, K = K, user.allocs = user.allocs, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, factor.time = factor.time,
+                                                                    design = design, n.sims = n.sims, rho = rho,
+                                                                    sigma.e = sigma.e, sigma.a = sigma.a, sig.level = sig.level,
+                                                                    family = family)))} else {return(list(results = res, inputs = list(I = I, P = P, K = K, user.allocs = user.allocs, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, factor.time = factor.time,
+                                                                                                                                         design = design, n.sims = n.sims, rho = rho,
+                                                                                                                                         sigma.e = sigma.e, sigma.a = sigma.a, sig.level = sig.level,
+                                                                                                                                         family = family)))}
 }
 
 
@@ -3337,17 +3376,18 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
 power.strat.pd <- function(I, P , K , S , mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
                           factor.time = TRUE, rho = NULL, family, design, gen.all = TRUE, n.allocs,
                           n.sims, sig.level = 0.05, plot = FALSE, seed = NULL,
-                          sigma.e = NULL, sigma.a = NULL, method = "analytic",  rep = NULL){
+                          sigma.e = NULL, sigma.a = NULL, method = "analytic"){
   n.cores <- parallel::detectCores()
   doParallel::registerDoParallel(cores=n.cores-1)
   if (!is.null(seed)){
     set.seed(seed)
   }
   if (method == "analytic"){
+    gen.all = NULL; n.allocs = NULL; n.sims = NULL
     res <- analytic.pd (I = I, P = P, K = K, S = S, pwr.thrd = pwr.thrd, factor.time = factor.time,
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot =plot,
-                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
-    res$PREP <- NULL
+                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a)
+    res$PREP.CV <- NULL
   }
   if (method == "sim"){
     res <- sim.strata.pd (I = I, P = P, K = K, S = S, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, pwr.thrd = pwr.thrd, factor.time = factor.time,
@@ -3361,8 +3401,8 @@ power.strat.pd <- function(I, P , K , S , mu0, Tx.effect, Time.effect = NULL, pw
                           sigma.e = sigma.e, sigma.a = sigma.a, print.allocs = TRUE, plot = plot, sig.level = sig.level,
                           family = family)
     res1 <- analytic.pd (I = I, P = P, K = K, S = S, user.allocs = res$allocation, pwr.thrd = pwr.thrd, factor.time = factor.time,
-                        mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot =plot,
-                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a,  rep = rep)
+                        mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = plot,
+                        design = design, sig.level = sig.level, sigma.e = sigma.e, sigma.a = sigma.a  )
     allocs <- res$allocation
     wgh <- res$weights
     final.data <- data.frame(weight = c(wgh),
@@ -3375,7 +3415,13 @@ power.strat.pd <- function(I, P , K , S , mu0, Tx.effect, Time.effect = NULL, pw
     res1$risk <- risk
     res1$PREP <- NULL
   }
-  if(method =="both") {return(list(simres = res, analyticres = res1))} else {return(res)}
+  if(method =="both") {return(list(results = list(simres = res, analyticres = res1), inputs = list(I = I, P = P, K = K, S = S, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, pwr.thrd = pwr.thrd, factor.time = factor.time,
+                                                                                                   design = design, gen.all = gen.all, n.allocs = n.allocs, n.sims = n.sims, rho = rho,
+                                                                                                   sigma.e = sigma.e, sigma.a = sigma.a, plot = plot, sig.level = sig.level,
+                                                                                                   family = family)))} else {return(list(results = res, inputs = list(I = I, P = P, K = K, S = S, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, pwr.thrd = pwr.thrd, factor.time = factor.time,
+                                                                                                                                                                      design = design, gen.all = gen.all, n.allocs = n.allocs, n.sims = n.sims, rho = rho,
+                                                                                                                                                                      sigma.e = sigma.e, sigma.a = sigma.a, print.allocs = TRUE, plot = plot, sig.level = sig.level,
+                                                                                                                                                                      family = family)))}
 }
 
 
