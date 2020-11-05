@@ -8,7 +8,7 @@ Calculate attained powers and construct power distribution for CRT
 Use simulations or analytic formula to calculate attained powers and construct pre-randomization power distribution for all allocations that a randomization algorithm can produce
 }
 \usage{
-power.pd(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = TRUE, family,  design, rho = NULL, sigma.e = NULL, sigma.a = NULL, sig.level = 0.05, method = "analytic", plot = FALSE, gen.all = TRUE, n.allocs = NULL, n.sims, seed = NULL, rep = NULL)
+power.pd(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = TRUE, family,  design, rho = NULL, sigma.e = NULL, sigma.a = NULL, sig.level = 0.05, method = "analytic", plot = FALSE, gen.all = TRUE, n.allocs = NULL, n.sims, seed = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,10 +20,9 @@ For SW-CRT, P is a vector indicating the number of clusters transitioning at eac
 For P-CRT, P is a vector indicating the number of clusters allocated to the control and intervention groups (e.g., P = c(5, 3) means 5 clusters in control and 3 clusters in intervention groups)
 }
   \item{K}{
-For SW,  K is the cluster size per period for each cluster. Then the total cluster size is K times (number of transition steps+1).
-For PCRT, K is the cluster size.
-Length of K equals sum(I) - total number of clusters. K should be entered as the order in I (i.e., I = c(6, 2) and K = c(6, 6, 6, 6, 6, 6, 12, 12) means the first six small clusters have 6 pts per period and the two large clusters have 12 pts per period).
-K can be a non-integer. If the resulting cluster size is also a non-integer, the cluster size is determined by randomly picking one of the two nearest integers with probabilities that ensure the non-integer cluster size is achieved in expectation (e.g., a cluster has K = 6.1 with four transition periods, the total cluster size is 30.5. Therefore, cluster size for this cluster will be either 30 or 31 with probabilities 0.9 and 0.1)
+K is a vector indicating the number of participants per cluster.
+Length of K equals the total number of clusters. K should be  ordered to match I (i.e., I = c(6, 2) and K = c(6, 6, 6, 6, 6, 6, 12, 12) means the first six small clusters have 6 pts per period and the two large clusters have 12 pts per period).
+
 }
   \item{mu0}{
 Baseline mean/risk/rate on the outcome’s natural scale (i.e., not transformed by the link function)
@@ -32,19 +31,19 @@ Baseline mean/risk/rate on the outcome’s natural scale (i.e., not transformed 
 Treatment effect (natural scale: risk difference Gaussian outcome, odds ratio for binary outcome, risk ratio for Poisson outcome)
 }
   \item{Time.effect}{
-Time effect (linear scale). Default is no time effect. The time effect can be a continuous linear trend (a single number) or categorical time effect
+Time effect (linear scale). Default is no time effect. The time effect can be a continuous linear trend (a single number) or categorical time effect (a vector of J numbers reflecting the time effects for each period excluding baseline)
 }
   \item{pwr.thrd}{
 The threshold used to define "low power". If NULL no risk will be calculated, risk in the output returns NA by default
 }
   \item{factor.time}{
-Logical values. Whether treating time as a categorical variable in  the analysis. In simulation, user can treat time differently in data generator and analysis model. (i.e., categorical time effect in data generator, but continuous time effect in the analysis). However, these two must match in analytic calculation. For the P-CRT, this value is ignored.
+Logical indicator for whether time is treated as a categorical variable in the analysis. In simulation, user can treat time differently in data generator and analysis model. (i.e., categorical time effect in data generator, but continuous time effect in the analysis). However, these two must match in analytic calculation. For the P-CRT, this value is ignored.
 }
   \item{family}{
 Indicate the type of outcome. One of "gaussian", "binomial" or "poisson" (case sensitive)
 }
   \item{design}{
-Can be: parallel cluster randomized trial ("pcrt") or stepped-wedge trial ("sw")
+Can be “pcrt” for a P-CRT or “sw” for a SW-CRT
 }
   \item{rho}{
 Intra-cluster coefficient (ICC)
@@ -76,12 +75,7 @@ NULL (by default) or a number. The number of unique allocations to evaluate. If 
 The number of trials to simulate when calculating the attained power (should be greater than 1)
 }
   \item{seed}{
-A number for set.seed () to enable reproducible simulations
-}
-
-Only available when method = "analytic"
-  \item{rep}{
-The number of times analytic formulae should be repeated when K is non-integer. We recommend a number of around 1,000 to reach a stable estimate. Leave at 1 or NULL (default) when the cluster sizes are integers.
+A number for set.seed () to enable reproducibility of simulation results
 }
 }
 \details{

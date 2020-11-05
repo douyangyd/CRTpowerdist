@@ -8,7 +8,7 @@ Calculate attained powers and construct power distribution for stratified CRT
 Use simulations or analytic formula to calculate attained powers and construct pre-randomization power distribution for all allocations that a randomization algorithm can produce in stratified CRT
 }
 \usage{
-power.strat.pd(I, P, K, S, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = TRUE,  family, design, rho = NULL, sigma.a = NULL, sigma.e = NULL, sig.level = 0.05, method = "analytic", plot = FALSE, gen.all = TRUE, n.allocs = NULL, n.sims, seed = NULL, rep = NULL)
+power.strat.pd(I, P, K, S, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = TRUE,  family, design, rho = NULL, sigma.a = NULL, sigma.e = NULL, sig.level = 0.05, method = "analytic", plot = FALSE, gen.all = TRUE, n.allocs = NULL, n.sims, seed = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,10 +19,8 @@ A vector indicating the number of clusters in each size group (i.e., 8 clusters 
 P is a list. Each element within the list consists of a stratum name and a vector specifying the number of clusters transit at each period within that stratum. (i.e., P=list("a"=c(1,2,1),"b"=c(1,1,2)) means that there are two strata named "a" and "b". In stratum a, one cluster transit at the first and third transition period, and two clusters transit at the second transition period. In stratum b, one cluster transit at the first and second transition period, and two clusters transit at the third transition period)
 }
   \item{K}{
-For SW,  K is the cluster size per period for each cluster. Then the total cluster size is K times (number of transition steps + 1).
-For PCRT, K is the cluster size.
-Length of K equals sum(I) - total number of clusters. K should be entered as the order in I (i.e., I = c(6, 2) and K = c(6, 6, 6, 6, 6, 6, 12, 12) means the first six small clusters have 6 pts per period and the two large clusters have 12 pts per period).
-K can be a non-integer. If the resulting cluster size is also a non-integer, the cluster size is determined by randomly picking one of the two nearest integers with probabilities that ensure the non-integer cluster size is achieved in expectation (e.g., a cluster has K = 6.1 with four transition periods, the total cluster size is 30.5. Therefore, cluster size for this cluster will be either 30 or 31 with probabilities 0.9 and 0.1)
+K is a vector indicating the number of participants per cluster.
+Length of K equals the total number of clusters. K should be  ordered to match I (i.e., I = c(6, 2) and K = c(6, 6, 6, 6, 6, 6, 12, 12) means the first six small clusters have 6 pts per period and the two large clusters have 12 pts per period).
 }
   \item{S}{
 Stratum ID for each cluster. S is a factor variable and should be entered as the same order as I. (i.e., I = c(6, 2) and S = c("a", "b", "b", "a", "a", "b", "b", "a") means among six small clusters, small cluster #1 is at stratum a, small cluster #2 is at stratum b, etc., and the two large clusters are at stratum a and b respectively. Note that the levels in S should match the name of elements in P
@@ -34,13 +32,13 @@ Baseline mean/risk/rate on the outcome’s natural scale (i.e., not transformed 
 Treatment effect (natural scale: risk difference Gaussian outcome, odds ratio for binary outcome, risk ratio for Poisson outcome)
 }
   \item{Time.effect}{
-Time effect (linear scale). Default is no time effect. The time effect can be a continuous linear trend (a single number) or categorical time effect
+Time effect (linear scale). Default is no time effect. The time effect can be a continuous linear trend (a single number) or categorical time effect (a vector of J numbers reflecting the time effects for each period excluding baseline)
 }
   \item{pwr.thrd}{
 The threshold used to define "low power". If NULL no risk will be calculated, risk in the output returns NULL by default
 }
   \item{factor.time}{
-Logical value. Whether treating time as a categorical variable in analysis model. In simulation, user can treat time differently in data generator and analysis model. (i.e., continuous time effect in data generator, but categorical time effect in the analysis). However, these two must match in analytic calculation. For the P-CRT, this value is ignored.
+Logical indicator for whether time is treated as a categorical variable in the analysis. In simulation, user can treat time differently in data generator and analysis model. (i.e., categorical time effect in data generator, but continuous time effect in the analysis). However, these two must match in analytic calculation. For the P-CRT, this value is ignored.
 }
   \item{family}{
 Indicate the type of outcome. One of "gaussian", "binomial" or "poisson" (case sensitive)
@@ -74,13 +72,7 @@ NULL (by default) or a number. The number of unique allocations to evaluate. If 
 The number of trials to simulate when calculating the attained power (should be greater than 1)
 }
   \item{seed}{
-A number for set.seed () to enable reproducible simulations
-}
-
-Only available when method = "analytic"
-
-  \item{rep}{
-The number of times analytical formulae should be repeated when K is non-integer. We recommend a number of around 1,000 to reach a stable estimate. Leave at 1 or NULL when the cluster sizes are integers
+A number for set.seed () to enable reproducibility of simulation results
 }
 }
 \details{
