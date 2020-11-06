@@ -3232,10 +3232,10 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
     wgh <- NULL
     risk <- NULL}
 
-  if (design == "sw" & is.null(user.allocs)) return(list(attained.power.analytic=power.mean, PREP.analytic = sum(power.mean*wgh), CV = CV, PREP.CV= power.CV, allocations = allocs, risk.analytic = risk))
-  if (design == "sw" & !is.null(user.allocs)) return(list(attained.power.analytic=power.mean, CV = CV, PREP.CV= power.CV, allocations = allocs, risk = risk))
-  if (design == "pcrt" & is.null(user.allocs))  return(list(attained.power.analytic=power.mean, PREP.analytic = sum(power.mean*wgh), CV = CV, PREP.CV= power.CV, allocations = allocs, risk.analytic = risk))
-  if (design == "pcrt" & !is.null(user.allocs))  return(list(attained.power.analytic=power.mean, CV = CV, PREP.CV= power.CV, allocations = allocs, risk.analytic = risk))
+  if (design == "sw") return(list(attained.power.analytic=power.mean, PREP.analytic = sum(power.mean*wgh), CV = CV, PREP.CV= power.CV, allocations = allocs, risk.analytic = risk))
+  #if (design == "sw" & !is.null(user.allocs)) return(list(attained.power.analytic=power.mean, CV = CV, PREP.CV= power.CV, allocations = allocs, risk.analytic = risk))
+  if (design == "pcrt")  return(list(attained.power.analytic=power.mean, PREP.analytic = sum(power.mean*wgh), CV = CV, PREP.CV= power.CV, allocations = allocs, risk.analytic = risk))
+  #if (design == "pcrt" & !is.null(user.allocs))  return(list(attained.power.analytic=power.mean, CV = CV, PREP.CV= power.CV, allocations = allocs, risk.analytic = risk))
 
 }
 
@@ -3293,6 +3293,9 @@ power.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NUL
       risk <- NULL
     }
     res1$risk <- risk
+    res1$allocations <- NULL
+    ### Redefine PREP in case only part of it has been evaulated
+    res1$PREP.analytic <- sum(res1$attained.power.analytic*(wgh/sum(wgh)))
   }
   if(method =="both") {return(list(results = c(res, res1), inputs = list(I = I, P = P, K = K, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, pwr.thrd = pwr.thrd, factor.time = factor.time,
                                                                                                    design = design, gen.all = gen.all, n.allocs = n.allocs,  n.sims = n.sims, rho = rho,
@@ -3333,7 +3336,8 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
                         design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a)
     res$PREP.CV <- NULL
     res$allocations <- NULL
-    res$risk <- NULL
+    res$risk.analytic <- NULL
+    res$PREP.analytic <- NULL
 
   }
   if (method == "sim"){
@@ -3359,7 +3363,8 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
                         design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a)
     res1$PREP.CV <- NULL
     res1$allocations <- NULL
-    res1$risk <- NULL
+    res1$risk.analytic <- NULL
+    res1$PREP.analytic <- NULL
   }
   if(method =="both") {return(list(results = c(res,res1), inputs = list(I = I, P = P, K = K, user.allocs = user.allocs, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, factor.time = factor.time,
                                                                     design = design, n.sims = n.sims, rho = rho,
@@ -3414,6 +3419,8 @@ power.strat.pd <- function(I, P , K , S , mu0, Tx.effect, Time.effect = NULL, pw
     }
     res1$risk <- risk
     res1$PREP <- NULL
+    res1$allocations <- NULL
+    res1$PREP.analytic <- sum(res1$attained.power.analytic*(wgh/sum(wgh)))
   }
   if(method =="both") {return(list(results = list(simres = res, analyticres = res1), inputs = list(I = I, P = P, K = K, S = S, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, pwr.thrd = pwr.thrd, factor.time = factor.time,
                                                                                                    design = design, gen.all = gen.all, n.allocs = n.allocs, n.sims = n.sims, rho = rho,
