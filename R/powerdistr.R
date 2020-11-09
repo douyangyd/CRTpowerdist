@@ -299,6 +299,7 @@ DesignMatrix <- function(I, J, P, K, S, factor.time = FALSE, user.allocs = NULL,
 
 
 
+
 all_allocs_strat <- function(I, P, S, K) {
   # identify levels of stratification
   strat_name = levels(S)
@@ -309,6 +310,11 @@ all_allocs_strat <- function(I, P, S, K) {
     I_strat = sapply(unique(K), function(kk){
       length(which(K_strat == kk))
     })
+
+    if(!all(I_strat != 0)) {
+      if(length(I_strat) == 2) I_strat = c(I_strat, 0, 0)
+      if(length(I_strat) == 3) I_strat = c(I_strat, 0)
+    }
     P_strat = P[[which(names(P) == name_i)]]
     id_strat = which(S == name_i)
     list(I_strat = I_strat, P_strat = P_strat, id_strat = id_strat )
@@ -320,6 +326,7 @@ all_allocs_strat <- function(I, P, S, K) {
   # generate allocations within each stratum
   alloc_strat_list <- lapply(param_strat_list, function(param_strat) {
     all_allocs(I = param_strat$I_strat, J = J, P = param_strat$P_strat)$order
+
   })
 
   # all possible combinations of unique allocations from each stratum
@@ -330,6 +337,7 @@ all_allocs_strat <- function(I, P, S, K) {
   # convert allocations to array form
   array_list = mapply(alloc_strat_list, param_strat_list, FUN = function(alloc_strat, param_strat){
     nn = nrow(alloc_strat)
+    if(length(param_strat$I_strat) != length(I)) param_strat$I_strat = param_strat$I_strat[1:length(I)]
     clus.id = rep(1:length(param_strat$I_strat), times = param_strat$I_strat)
 
     # list of allocations grouped by cluster type
@@ -389,7 +397,6 @@ all_allocs_strat <- function(I, P, S, K) {
   weight <- multiplicity/sum(multiplicity)  ## weights
   return(list(order = alloc, weights = weight))
 }
-
 
 ###
 rand <- compiler::cmpfun(rand)
