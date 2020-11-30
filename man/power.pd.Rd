@@ -111,6 +111,7 @@ Hussey MA, Hughes JP. Design and analysis of stepped wedge cluster randomized tr
 
 Karla Hemming, Jessica Kasza, Richard Hooper, Andrew Forbes, Monica Taljaard, A tutorial on sample size calculation for multiple-period cluster randomized parallel, cross-over and stepped-wedge trials using the Shiny CRT Calculator, International Journal of Epidemiology, Volume 49, Issue 3, June 2020, Pages 979-995.
 
+Ouyang Y, Karim ME, Gustafson P, Field TS, Wong H. Explaining the variation in the attained power of a stepped-wedge trial with unequal cluster sizes. BMC Med Res Methodol. 2020;20(1):166. Published 2020 Jun 24. doi:10.1186/s12874-020-01036-5
 }
 \author{
 Yongdong Ouyang, Liang Xu, Hubert Wong
