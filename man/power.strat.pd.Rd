@@ -8,11 +8,7 @@ Calculate attained powers and construct power distribution for stratified CRT
 Use simulations or analytic formula to calculate attained powers and construct pre-randomization power distribution for all allocations that a randomization algorithm can produce in stratified CRT
 }
 \usage{
-power.strat.pd (I, P , K , S , mu0, Tx.effect, Time.effect = NULL,
-                pwr.thrd = NULL, factor.time = TRUE, rho = NULL,
-                family, design, gen.all = TRUE, n.allocs, n.sims,
-                sig.level = 0.05, plot = FALSE, seed = NULL,
-                sigma.e = NULL, sigma.a = NULL, method = "analytic")
+power.strat.pd(I, P, K, S, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = TRUE,  family, design, rho = NULL, sigma.a = NULL, sigma.e = NULL, sig.level = 0.05, method = "analytic", plot = FALSE, gen.all = TRUE, n.allocs = NULL, n.sims, seed = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,15 +16,14 @@ power.strat.pd (I, P , K , S , mu0, Tx.effect, Time.effect = NULL,
 A vector indicating the number of clusters in each size group (i.e., 8 clusters with six small and two large clusters has I = c(6, 2))
 }
   \item{P}{
-For SW-CRT, P is a list. Each element within the list consists of a stratum name and a vector specifying the number of clusters transit at each period within that stratum. (e.g., P=list("a"=c(1,2,1),"b"=c(1,1,2)) means that there are two strata named "a" and "b". In stratum a, one cluster transitions at the first and third steps while two clusters transition at the second step. In stratum b, one cluster transitions at the first and second steps while two clusters transition at the third step)
-For the P-CRT, length of each strata is equal to two. (e.g., P=list("a"=c(1,2),"b"=c(2,1)) means that there are two strata named "a" and "b". In stratum a, one cluster is in control while two clusters are in treatment group. In stratum b, two clusters are in control groups while one cluster are in intervention group)
+P is a list. Each element within the list consists of a stratum name and a vector specifying the number of clusters transit at each period within that stratum. (i.e., P=list("a"=c(1,2,1),"b"=c(1,1,2)) means that there are two strata named "a" and "b". In stratum a, one cluster transit at the first and third transition period, and two clusters transit at the second transition period. In stratum b, one cluster transit at the first and second transition period, and two clusters transit at the third transition period)
 }
   \item{K}{
-K is a vector indicating the number of participants in each cluster.
-Length of K equals the total number of clusters. K should be  ordered to match I (e.g., I = c(6, 2) and K = c(6, 6, 6, 6, 6, 6, 12, 12) means the first six small clusters have 6 pts per period and the two large clusters have 12 pts per period)
+K is a vector indicating the number of participants per cluster.
+Length of K equals the total number of clusters. K should be  ordered to match I (i.e., I = c(6, 2) and K = c(6, 6, 6, 6, 6, 6, 12, 12) means the first six small clusters have 6 pts per period and the two large clusters have 12 pts per period).
 }
   \item{S}{
-Stratum ID for each cluster. S is a factor variable and should be entered as the same order as I. (e.g., I = c(6, 2) and S = c("a", "b", "b", "a", "a", "b", "b", "a") means among six small clusters, small cluster #1 is at stratum a, small cluster #2 is at stratum b, etc., and the two large clusters are at stratum a and b respectively. Note that the levels in S should match the names of the elements in P.
+Stratum ID for each cluster. S is a factor variable and should be entered as the same order as I. (i.e., I = c(6, 2) and S = c("a", "b", "b", "a", "a", "b", "b", "a") means among six small clusters, small cluster #1 is at stratum a, small cluster #2 is at stratum b, etc., and the two large clusters are at stratum a and b respectively. Note that the levels in S should match the name of elements in P
 }
   \item{mu0}{
 Baseline mean/risk/rate on the outcome’s natural scale (i.e., not transformed by the link function)
@@ -37,19 +32,19 @@ Baseline mean/risk/rate on the outcome’s natural scale (i.e., not transformed 
 Treatment effect (natural scale: risk difference Gaussian outcome, odds ratio for binary outcome, risk ratio for Poisson outcome)
 }
   \item{Time.effect}{
-Time effect (linear predictor scale). Default is no time effect. The time effect can be a continuous linear trend (a single number) or categorical time effect (a vector of J numbers reflecting the time effects for each period excluding baseline)
+Time effect (linear scale). Default is no time effect. The time effect can be a continuous linear trend (a single number) or categorical time effect (a vector of J numbers reflecting the time effects for each period excluding baseline)
 }
   \item{pwr.thrd}{
 The threshold used to define "low power". If NULL no risk will be calculated, risk in the output returns NULL by default
 }
   \item{factor.time}{
-Logical indicator for whether time is treated as a categorical variable in the analysis. In simulation, user can treat time differently in data generator and analysis model. (i.e., categorical time effect in data generator, but continuous time effect in the analysis). However, these two must match in analytic calculation. For the P-CRT, this value is ignored
+Logical indicator for whether time is treated as a categorical variable in the analysis. In simulation, user can treat time differently in data generator and analysis model. (i.e., categorical time effect in data generator, but continuous time effect in the analysis). However, these two must match in analytic calculation. For the P-CRT, this value is ignored.
 }
   \item{family}{
 Indicate the type of outcome. One of "gaussian", "binomial" or "poisson" (case sensitive)
 }
   \item{design}{
-Can be "pcrt" for a P-CRT or "sw" for a SW-CRT
+Choice of parallel cluster randomization trial ("pcrt") or stepped-wedge trial ("sw")
 }
   \item{sigma.a}{
 Between-cluster SD
@@ -71,7 +66,7 @@ Only used when method = "sim" or "both"
 Whether generate all possible unique allocations before sampling. If TRUE, all possible unique allocation will be listed.
 }
   \item{n.allocs}{
-NULL (by default) or a number. The number of unique allocations to evaluate via simulation. If NULL, all possible unique allocations will be evaluated. If a number, a random sample of n.allocs unique allocations will be evaluated, and the powers for the remaining allocations will be predicted
+NULL (by default) or a number. The number of unique allocations to evaluate. If NULL, all possible unique allocations will be evaluated. If a number is entered, a sample of unique allocations will be evaluated, then the predicted powers for rest allocations will be evaluated
 }
   \item{n.sims}{
 The number of trials to simulate when calculating the attained power (should be greater than 1)
@@ -84,23 +79,28 @@ A number for set.seed () to enable reproducibility of simulation results
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-A list with two named components "results" and "inputs", each of which is a list. Components of "results" report the results of the function call while the components of "inputs" reproduce the inputs to the function call. Components associated with a specific method will appear only if that method was requested in the function call (e.g., the component "attained.power.analytic" is generated only if method = "analytic" or "both"). If plot = TRUE, a plot of the PD will be displayed.
+Method = "sim"
 
-\bold{$results}
-\item{allocations}{A matrix with each row identifying one allocation used in the evaluation of the PD}
-\item{weights}{The weights (proportional to the multiplicities of each allocation) applied to the attained powers when calculating the PD}
-\item{attained.power.sim}{A vector of the attained power for each allocation evaluated using simulation (or prediction)}
-\item{coefs}{A matrix displaying the average treatment effect coefficient, the average standard error for coefficient, the treatment-vs-time correlation (TTC), the control group size (control.size), the treatment group size (trt.size), and the absolute treatment group imbalance (TGI) for each allocation evaluated by simulation.}
-\item{PREP.sim}{PREP calculated as a weighted average of all attained powers evaluated by simulation or prediction}
-\item{risk.sim}{The risk of obtaining an attained power lower than the threshold (pwr.thrd) based on the PD obtained via simulation}
-\item{attained.power.analytic}{A vector of the attained power for each allocation evaluated using analytic approximation}
-\item{PREP.analytic}{PREP calculated as a weighted average of all attained powers using analytic approximation}
-\item{CV}{Coefficient of variation of the cluster sizes used in the analytic approximation}
-\item{PREP.CV}{PREP calculated according to CV-based formulae}
-\item{risk.analytic}{The risk of obtaining an attained power lower than the threshold (pwr.thrd) based on the PD obtained via analytic approximation}
+A list contains following objects:
+\item{coefs}{
+A matrix displays the power, estimated coefficient, standard error for estimated coefficient, treatment-vs-time correlation (TTC), control group size (control.size), treatment group size (trt.size), and absolute treatment group imbalance (TGI) for each evaluated allocation.
+}
+\item{predicted.power}{The predicted power for unevaluated allocations}
+\item{PREP}{Average of all attained powers, including both evaluated and predicted powers}
+\item{weights}{The weights used for all (evaluated) allocations}
+\item{PREP}{Pre-randomization expected power according to CV-based formulae (not for power.strat.pd)}
+\item{risk}{The risk of obtaining an attained power lower than the threshold (pwr.thrd)}
+\item{allocation}{A matrix of all possible unique allocations}
 
-\bold{$inputs}
-\item{I, P, K, ..., etc}{Input values to the function call}
+Method = "analytic"
+
+A list contains following objects:
+\item{attained.power}{Attained power for each unique allocation}
+\item{PREP}{Average of all attained powers}
+\item{allocation}{A matrix of all possible unique allocations or user-specified allocations}
+\item{CV}{Coefficient of variation of cluster sizes}
+\item{PREP.CV}{Pre-randomization expected power according to CV-based formulae (not for power.strat.pd)}
+\item{risk}{The risk of obtaining an attained power lower than the threshold (pwr.thrd)}
 }
 
 \references{

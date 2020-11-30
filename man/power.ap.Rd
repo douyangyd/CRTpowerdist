@@ -8,11 +8,7 @@ Calculate attained power for specific allocation(s)
 Use simulations or analytic formula to calculate attained power for specific allocations
 }
 \usage{
-power.ap (I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs,
-          factor.time = TRUE, family, design, rho = NULL,
-          sigma.e = NULL, sigma.a = NULL, sig.level = 0.05,
-          method = "analytic", adj.pwr=FALSE, seed = NULL,
-          n.sims = 1000)
+power.ap(I, P, K, mu0, Tx.effect, Time.effect = NULL, user.allocs, factor.time = TRUE, family, design, rho = NULL, sigma.e = NULL, sigma.a = NULL, sig.level = 0.05, method = "analytic", adj.pwr = FALSE, seed = NULL, n.sims)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,8 +20,8 @@ For SW-CRT, P is a vector indicating the number of clusters transitioning at eac
 For P-CRT, P is a vector indicating the number of clusters allocated to the control and intervention groups (e.g., P = c(5, 3) means 5 clusters in control and 3 clusters in intervention groups)
 }
   \item{K}{
-K is a vector indicating the number of participants in each cluster.
-Length of K equals the total number of clusters. K should be  ordered to match I (e.g., I = c(6, 2) and K = c(6, 6, 6, 6, 6, 6, 12, 12) means the first six small clusters have 6 pts per period and the two large clusters have 12 pts per period)
+K is a vector indicating the number of participants per cluster.
+Length of K equals the total number of clusters. K should be  ordered to match I (i.e., I = c(6, 2) and K = c(6, 6, 6, 6, 6, 6, 12, 12) means the first six small clusters have 6 pts per period and the two large clusters have 12 pts per period).
 }
   \item{mu0}{
 Baseline mean/risk/rate on the outcome’s natural scale (i.e., not transformed by the link function)
@@ -34,22 +30,19 @@ Baseline mean/risk/rate on the outcome’s natural scale (i.e., not transformed 
 Treatment effect (natural scale: risk difference Gaussian outcome, odds ratio for binary outcome, risk ratio for Poisson outcome)
 }
   \item{Time.effect}{
-Time effect (linear predictor scale). Default is no time effect. The time effect can be a continuous linear trend (a single number) or categorical time effect (a vector of J numbers reflecting the time effects for each period excluding baseline)
+Time effect (linear scale). Default is no time effect. The time effect can be a continuous linear trend (a single number) or categorical time effect (a vector of J numbers reflecting the time effects for each period excluding baseline)
 }
   \item{user.allocs}{
 A matrix. Each row represents a specific allocation (a vector indicating when the cluster transit from control to intervention) that the user wants to evaluate for power
 }
   \item{factor.time}{
-Logical indicator for whether time is treated as a categorical variable in the analysis. In simulation, user can treat time differently in data generator and analysis model. (i.e., categorical time effect in data generator, but continuous time effect in the analysis). However, these two must match in analytic calculation. For the P-CRT, this value is ignored
+Logical indicator for whether time is treated as a categorical variable in the analysis. In simulation, user can treat time differently in data generator and analysis model. (i.e., categorical time effect in data generator, but continuous time effect in the analysis). However, these two must match in analytic calculation. For the P-CRT, this value is ignored.
 }
   \item{family}{
-Indicate the type of outcome. One of "gaussian", "binomial" or "poisson" (case sensitive)
+Type of outcome variable. One of “gaussian”, “binomial” or “poisson” (case sensitive)
 }
   \item{design}{
-Can be "pcrt" for a P-CRT or "sw" for a SW-CRT
-}
-  \item{sig.level}{
-Significance level (Default=0.05). If you have different allocations to evaluate the sig.level can be a vector in which the i-th entry specifies the significance level for the allocation in the i-th row of user.allocs
+Can be “pcrt” for a P-CRT or “sw” for a SW-CRT
 }
   \item{rho}{
 Intra-cluster coefficient (ICC)
@@ -60,40 +53,59 @@ Between-cluster SD
   \item{sigma.a}{
 Individual-level SD (at most, two of rho, sigma.a, and sigma.e should be provided)
 }
+  \item{sig.level}{
+Significance level (Default=0.05). If you have different allocations to evaluate the sig.level can be a vector in which the i-th entry specifies the significance level for the allocation in the i-th row of user.allocs
+}
   \item{method}{
 "sim", "analytic" or "both". Choice of using simulation, analytic formula or both methods to calculate the power
 }
-  \item{seed}{
-  A number for set.seed () to reproduce simulation
-}
-Only used with method = "sim" or "both"
   \item{adj.pwr}{
 Whether evaluate power adjusted for the P-value cut-off that corresponds to achieving the nominal Type I error rate
 }
+  \item{seed}{
+  A number for set.seed () to enable reproducibility of simulation results
+}
+
+Only used with method = "sim" or "both"
   \item{n.sims}{
 The number of trials the user wants to simulate to calculation power (should be greater than 1)
 }
 }
-
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
-
 \value{
-A list with two named components "results" and "inputs", each of which is a list. Components of "results" report the results of the function call while the components of "inputs" reproduce the inputs to the function call. Components associated with a specific method will appear only if that method was requested in the function call (e.g., the component "attained.power.analytic" is generated only if method = "analytic" or "both").
 
-\bold{$result}
-\item{attained.power.sim}{Attained power for the allocation(s) evaluated using simulation}
-\item{trt.estimate}{The average of the treatment effect coefficients across simulation runs}
-\item{SE}{The average of the standard errors for the estimated treatment coefficients across simulation runs}
+\bold{Method = "sim"}
+
+\emph{$results}
+\item{attained.power}{Attained power for evaluated allocation(s)}
+\item{SE}{The average standard error for estimated treatment coefficients}
+\item{trt.estimate}{The average of the treatment effect coefficients}
 \item{TGI}{Absolute treatment group imbalance for evaluated allocation(s)}
 \item{TTC}{Treatment-vs-time correlation for evaluated allocation(s)}
-\item{attained.power.analytic}{Attained power for the allocation(s) evaluated using analytic approximation}
-\item{CV}{Coefficient of variation of the cluster sizes used in the analytic approximation}
+
+\emph{$inputs}
+
+Display all power.ap input values
 
 
-\bold{$inputs}
-\item{I, P, K, ..., etc}{Input values to the function call}
+\bold{Method = "analytic"}
+
+\emph{$results}
+\item{attained.power}{Attained power for each unique allocation}
+\item{CV}{Coefficient of variation of cluster sizes}
+
+\emph{$inputs}
+
+Display all power.ap input values
+
+
+\bold{Method = "both"}
+
+\emph{$results}
+\item{$simres}{The \emph{$results} list under method = “sim”}
+\item{$analyticres}{The \emph{$results} list under method = “analytic”}
 }
 
 \references{
@@ -118,12 +130,19 @@ Yongdong Ouyang, Liang Xu, Hubert Wong
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-power.ap(I = c(9, 3), P = c(3, 3, 3, 3), K = c(rep(6, 9), rep(62, 3)),
+power.ap(I = c(9, 3), P = c(3, 3, 3, 3), K = c(rep(30, 9), rep(310, 3)),
          user.allocs = rbind(c(1, 1, 1, 2, 2, 2,
                                3, 3, 3, 4, 4, 4)),
-         mu0 = 0, Tx.effect = 0.26, Time.effect = 1,
-         factor.time = FALSE, design = "sw", rho = 0.01, sigma.e = 1,
-         sig.level = 0.05, adj.pwr =FALSE, family = "gaussian",
-         method = "sim", seed = 222,
+         mu0 = 0, Tx.effect = 0.26, Time.effect = 1, factor.time = FALSE,
+         design = "sw", rho = 0.01, sigma.e = 1, sig.level = 0.05, adj.pwr =FALSE,
+         family = "gaussian", method = "sim", seed = 222,
          n.sims = 2000)
+
+power.ap(I = c(9, 3), P = c(3, 3, 3, 3), K = c(rep(30, 9), rep(310, 3)),
+         user.allocs = rbind(c(1, 1, 1, 2, 2, 2,
+                               3, 3, 3, 4, 4, 4)),
+         mu0 = 0, Tx.effect = 0.26, Time.effect = 1, factor.time = FALSE,
+         design = "sw", rho = 0.01, sigma.e = 1, sig.level = 0.05,
+         family = "gaussian", method = "analytic")
+
 }
