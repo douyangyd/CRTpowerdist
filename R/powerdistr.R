@@ -299,7 +299,6 @@ DesignMatrix <- function(I, J, P, K, S, factor.time = FALSE, user.allocs = NULL,
 
 
 
-
 all_allocs_strat <- function(I, P, S, K) {
   # identify levels of stratification
   strat_name = levels(S)
@@ -310,11 +309,6 @@ all_allocs_strat <- function(I, P, S, K) {
     I_strat = sapply(unique(K), function(kk){
       length(which(K_strat == kk))
     })
-
-    if(!all(I_strat != 0)) {
-      if(length(I_strat) == 2) I_strat = c(I_strat, 0, 0)
-      if(length(I_strat) == 3) I_strat = c(I_strat, 0)
-    }
     P_strat = P[[which(names(P) == name_i)]]
     id_strat = which(S == name_i)
     list(I_strat = I_strat, P_strat = P_strat, id_strat = id_strat )
@@ -326,7 +320,6 @@ all_allocs_strat <- function(I, P, S, K) {
   # generate allocations within each stratum
   alloc_strat_list <- lapply(param_strat_list, function(param_strat) {
     all_allocs(I = param_strat$I_strat, J = J, P = param_strat$P_strat)$order
-
   })
 
   # all possible combinations of unique allocations from each stratum
@@ -337,7 +330,6 @@ all_allocs_strat <- function(I, P, S, K) {
   # convert allocations to array form
   array_list = mapply(alloc_strat_list, param_strat_list, FUN = function(alloc_strat, param_strat){
     nn = nrow(alloc_strat)
-    if(length(param_strat$I_strat) != length(I)) param_strat$I_strat = param_strat$I_strat[1:length(I)]
     clus.id = rep(1:length(param_strat$I_strat), times = param_strat$I_strat)
 
     # list of allocations grouped by cluster type
@@ -397,6 +389,7 @@ all_allocs_strat <- function(I, P, S, K) {
   weight <- multiplicity/sum(multiplicity)  ## weights
   return(list(order = alloc, weights = weight))
 }
+
 
 ###
 rand <- compiler::cmpfun(rand)
@@ -507,14 +500,14 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
     ### Gaussian outcomes
     if (family == "gaussian") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- K
-        #clus.size.list <- c()
-        #for (i in 1:length(K)){
-        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
-        #                 prob= c(1-(K[i]-floor(K[i])),
-        #                         (K[i]-floor(K[i]))),
-        #                 1, replace=T)
-        #  clus.size.list <- c(clus.size.list,temp)}
+        ### pick a cluster size from two nearest int.
+        clus.size.list <- c()
+        for (i in 1:length(K)){
+          temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                         prob= c(1-(K[i]-floor(K[i])),
+                                 (K[i]-floor(K[i]))),
+                         1, replace=T)
+         clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
         size <- sum(clus.size.list)
         period <- rep(1, size) #not used in pcrt
@@ -562,21 +555,21 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
         con[i] <- mean(temp[[i]]$con)
         int[i] <- mean(temp[[i]]$int)
       }
-      pred.data <- list("attained.power.sim"=pval,"TGI"=abs(con-int),"SE"=SE,"trt.estimate"=coef)
+      pred.data <- list("attained.power"=pval,"TGI"=abs(con-int),"SE"=SE,"trt.estimate"=coef)
     }
 
     ### Binary outcomes
     if (family == "binomial") {
       mu1 <- Tx.effect * (mu0/(1 - mu0))/(1 + Tx.effect * (mu0/(1 - mu0)))
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- K
-        #clus.size.list <- c()
-        #for (i in 1:length(K)){
-        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
-        #                 prob= c(1-(K[i]-floor(K[i])),
-        #                         (K[i]-floor(K[i]))),
-        #                 1, replace=T)
-        #  clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- c()
+        for (i in 1:length(K)){
+          temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                         prob= c(1-(K[i]-floor(K[i])),
+                                 (K[i]-floor(K[i]))),
+                         1, replace=T)
+          clus.size.list <- c(clus.size.list,temp)}
+
         size <- sum(clus.size.list)
         period <- rep(1, size) #not used in pcrt
         clus.id <- rep(1:sum(I), clus.size.list)
@@ -630,21 +623,20 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
         con[i] <- mean(temp[[i]]$con)
         int[i] <- mean(temp[[i]]$int)
       }
-      pred.data <- list("attained.power.sim"=pval,"TGI"=abs(con-int),"SE"=SE,"trt.estimate"=coef)
+      pred.data <- list("attained.power"=pval,"TGI"=abs(con-int),"SE"=SE,"trt.estimate"=coef)
     }
 
     ### count outcomes
     if (family == "poisson") {
       mu1 <- mu0 * Tx.effect
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- K
-        #clus.size.list <- c()
-        #for (i in 1:length(K)){
-        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
-        #                 prob= c(1-(K[i]-floor(K[i])),
-        #                         (K[i]-floor(K[i]))),
-        #                 1, replace=T)
-        #  clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- c()
+        for (i in 1:length(K)){
+          temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                         prob= c(1-(K[i]-floor(K[i])),
+                                 (K[i]-floor(K[i]))),
+                         1, replace=T)
+          clus.size.list <- c(clus.size.list,temp)}
         size <- sum(clus.size.list)
         period <- rep(1, size) #not used in pcrt
         clus.id <- rep(1:sum(I), clus.size.list)
@@ -694,7 +686,7 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
         con[i] <- mean(temp[[i]]$con)
         int[i] <- mean(temp[[i]]$int)
       }
-      pred.data <- list("attained.power.sim"=pval,"TGI"=abs(con-int),"SE"=SE,"trt.estimate"=coef)
+      pred.data <- list("attained.power"=pval,"TGI"=abs(con-int),"SE"=SE,"trt.estimate"=coef)
 
     }
   }
@@ -782,7 +774,7 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
         int[i] <- mean(temp[[i]]$int)
         timecor[i] <- mean(temp[[i]]$cor)
       }
-      pred.data <- list("attained.power.sim"=pval,"SE"=SE,"trt.estimate"=coef,"TGI"=abs(con-int),"TTC"=timecor)
+      pred.data <- list("attained.power"=pval,"SE"=SE,"trt.estimate"=coef,"TGI"=abs(con-int),"TTC"=timecor)
     }
 
     ### Binary outcomes
@@ -869,7 +861,7 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
         int[i] <- mean(temp[[i]]$int)
         timecor[i] <- mean(temp[[i]]$cor)
       }
-      pred.data <- list("attained.power.sim"=pval,"SE"=SE,"trt.estimate"=coef,"TGI"=abs(con-int),"TTC"=timecor)
+      pred.data <- list("attained.power"=pval,"SE"=SE,"trt.estimate"=coef,"TGI"=abs(con-int),"TTC"=timecor)
     }
 
     ### count outcomes
@@ -954,7 +946,7 @@ sim.ap <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FA
         int[i] <- mean(temp[[i]]$int)
         timecor[i] <- mean(temp[[i]]$cor)
       }
-      pred.data <- list("attained.power.sim"=pval,"SE"=SE,"trt.estimate"=coef,"TGI"=abs(con-int),"TTC"=timecor)
+      pred.data <- list("attained.power"=pval,"SE"=SE,"trt.estimate"=coef,"TGI"=abs(con-int),"TTC"=timecor)
     }
   }
   return(pred.data)
@@ -1105,14 +1097,13 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
     ### Gaussian outcomes
     if (family == "gaussian") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- K
-        #clus.size.list <- c()
-        #for (i in 1:length(K)){
-        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
-        #                 prob= c(1-(K[i]-floor(K[i])),
-        #                         (K[i]-floor(K[i]))),
-        #                 1, replace=T)
-        #  clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- c()
+        for (i in 1:length(K)){
+          temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                         prob= c(1-(K[i]-floor(K[i])),
+                                 (K[i]-floor(K[i]))),
+                         1, replace=T)
+          clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
         size <- sum(clus.size.list)
         period <- rep(1, size) #not used in pcrt
@@ -1167,14 +1158,14 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
     ### Binary outcomes
     if (family == "binomial") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- K
-        #clus.size.list <- c()
-        #for (i in 1:length(K)){
-        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
-        #                 prob= c(1-(K[i]-floor(K[i])),
-        #                         (K[i]-floor(K[i]))),
-        #                 1, replace=T)
-        #  clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- c()
+        for (i in 1:length(K)){
+          temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                         prob= c(1-(K[i]-floor(K[i])),
+                                 (K[i]-floor(K[i]))),
+                         1, replace=T)
+          clus.size.list <- c(clus.size.list,temp)}
+
         size <- sum(clus.size.list)
         period <- rep(1, size) #not used in pcrt
         clus.id <- rep(1:sum(I), clus.size.list)
@@ -1234,14 +1225,13 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
     ### count outcomes
     if (family == "poisson") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- K
-        #clus.size.list <- c()
-        #for (i in 1:length(K)){
-        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
-        #                 prob= c(1-(K[i]-floor(K[i])),
-        #                         (K[i]-floor(K[i]))),
-        #                 1, replace=T)
-        #  clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- c()
+        for (i in 1:length(K)){
+          temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                         prob= c(1-(K[i]-floor(K[i])),
+                                 (K[i]-floor(K[i]))),
+                         1, replace=T)
+          clus.size.list <- c(clus.size.list,temp)}
         size <- sum(clus.size.list)
         period <- rep(1, size) #not used in pcrt
         clus.id <- rep(1:sum(I), clus.size.list)
@@ -1592,6 +1582,7 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
     }
   }
   if (pred.power == TRUE) {
+    if(all(floor(K) == K)){
       period <- unlist(lapply(1:length(K), FUN= function(i){
         1:K[i] %% (length(P)+1)}))
       Tx <- lapply(1:nrow(unsample.allocs), FUN = function(i) {
@@ -1607,6 +1598,50 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
           pred.temp <- predict(pred.fit, data.frame(TTC = pred.TTC,
                                                     TGI = pred.TGI), type = "response")
         }
+    } else {
+      n.pred <- 100
+      Xdata <- foreach(iterators::icount(n.pred)) %dorng%
+        {
+          Xclus.size.list <- c()
+          for (i in 1:length(K)){
+            temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                           prob= c(1-(K[i]-floor(K[i])),
+                                   (K[i]-floor(K[i]))),
+                           1, replace=T)
+            Xclus.size.list <- c(Xclus.size.list,temp)}
+          ### convert cluster size per period as a vector
+          period <- unlist(lapply(1:length(Xclus.size.list), FUN= function(i){
+            sample(0:J,Xclus.size.list[i],replace = T)}))
+          return(list("clus.size.list"=Xclus.size.list,"period"=period))
+        }
+      pred.fit <- glm(cbind(n.sims*power,n.sims*(1-power)) ~ TTC + TGI + I(TTC^2), family = "binomial",
+                      data = pred.data)
+      temp <- foreach(i = 1:nrow(unsample.allocs)) %dorng%
+        {
+          output <- matrix(0, nrow=n.sims,ncol=4)
+          con <- c()
+          int <- c()
+          cor <- c()
+          for (j in 1:n.pred){
+            temp.allocs <- rep(unsample.allocs[i,],Xdata[[j]]$clus.size.list)
+            unsample.Tx <- ifelse(Xdata[[j]]$period < temp.allocs, 0, 1)
+            con[j] <- sum(Xdata[[j]]$clus.size.list)-sum(unsample.Tx) # size in control across all periods and clusters
+            int[j] <- sum(unsample.Tx) # size in intervention across all periods and clusters
+            cor[j] <- cor(Xdata[[j]]$period,unsample.Tx)
+          }
+          list("con"= con, "int"= int, "cor"= cor)
+        }
+      con <- c()
+      int <- c()
+      TTC <- c()
+      for (i in 1:length(temp)){
+        con[i] <- mean(temp[[i]]$con)
+        int[i] <- mean(temp[[i]]$int)
+        TTC[i] <- mean(temp[[i]]$cor)
+      }
+      pred.value <- predict(pred.fit, data.frame(TGI= abs(con-int), TTC = TTC),
+                            type = "response")
+    }
     if (plot == TRUE) {
       plotdata <- data.frame(weight = c(wgh[index], wgh[-index]),
                              power = c(pred.data$power, pred.value))
@@ -1628,20 +1663,20 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
     }
     wgt.power <- sum(pred.data$power * (sample.weight/(sum(sample.weight))))
   }
-  if (pred.power == TRUE){
-    plotdata <- data.frame(weight = c(wgh[index], wgh[-index]),
+  if (pred.power == T){
+    final.data <- data.frame(weight = c(wgh[index], wgh[-index]),
                              power = c(pred.data$power, pred.value))}
   else {
-    plotdata <- data.frame(weight = c(sample.weight),
+    final.data <- data.frame(weight = c(sample.weight),
                              power = c(pred.data$power))
     }
-  plotdata1 <- plotdata[order(plotdata$power),]
-  risk <- sum(plotdata1$weight[which(plotdata1$power <= pwr.thrd)])
+  final.data1 <- final.data[order(final.data$power),]
+  risk <- sum(final.data1$weight[which(final.data1$power <= pwr.thrd)])
   if (is.null(pwr.thrd)){
     risk <- NULL
   }
-  list(attained.power.sim = c(pred.data[,1],as.vector(pred.value)), coefs = pred.data[,-1], weights = c(sample.weight, sample.weight.c),
-       PREP.sim = wgt.power, risk.sim = risk, allocation = sample.allocs)
+  list(coefs = pred.data, predicted.power = as.vector(pred.value), weights = c(sample.weight),
+       PREP = wgt.power, risk = risk, allocation = sample.allocs)
 }
 
 sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL, factor.time = FALSE,
@@ -1762,7 +1797,7 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
       print(paste0("Total number of unique allocations: ", nrow(sample.allocs)))
     } else
     {
-      pred.power <- TRUE
+      pred.power <- FALSE
       index <- sample(1:nrow(allocs), n.allocs)
       sample.allocs <- allocs[index, , drop = FALSE]  #maintain matrix type when n.allocs=1
       sample.weight <- wgh[index]
@@ -1776,14 +1811,13 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
     ### Gaussian outcomes
     if (family == "gaussian") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- K
-        #clus.size.list <- c()
-        #for (i in 1:length(K)){
-        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
-        #                 prob= c(1-(K[i]-floor(K[i])),
-        #                         (K[i]-floor(K[i]))),
-        #                 1, replace=T)
-        #  clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- c()
+        for (i in 1:length(K)){
+          temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                         prob= c(1-(K[i]-floor(K[i])),
+                                 (K[i]-floor(K[i]))),
+                         1, replace=T)
+          clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
         size <- sum(clus.size.list)
         period <- rep(1, size) #not used in pcrt
@@ -1838,14 +1872,14 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
     ### Binary outcomes
     if (family == "binomial") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- K
-        #clus.size.list <- c()
-        #for (i in 1:length(K)){
-        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
-        #                 prob= c(1-(K[i]-floor(K[i])),
-        #                         (K[i]-floor(K[i]))),
-        #                 1, replace=T)
-        #  clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- c()
+        for (i in 1:length(K)){
+          temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                         prob= c(1-(K[i]-floor(K[i])),
+                                 (K[i]-floor(K[i]))),
+                         1, replace=T)
+          clus.size.list <- c(clus.size.list,temp)}
+
         size <- sum(clus.size.list)
         period <- rep(1, size) #not used in pcrt
         clus.id <- rep(1:sum(I), clus.size.list)
@@ -1905,14 +1939,13 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
     ### count outcomes
     if (family == "poisson") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- K
-        #clus.size.list <- c()
-        #for (i in 1:length(K)){
-        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
-        #                 prob= c(1-(K[i]-floor(K[i])),
-        #                         (K[i]-floor(K[i]))),
-        #                 1, replace=T)
-        #  clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- c()
+        for (i in 1:length(K)){
+          temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                         prob= c(1-(K[i]-floor(K[i])),
+                                 (K[i]-floor(K[i]))),
+                         1, replace=T)
+          clus.size.list <- c(clus.size.list,temp)}
         size <- sum(clus.size.list)
         period <- rep(1, size) #not used in pcrt
         clus.id <- rep(1:sum(I), clus.size.list)
@@ -2241,6 +2274,7 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
   }
   }
   if (pred.power == TRUE) {
+    if(all(floor(K) == K)){
       period <- unlist(lapply(1:length(K), FUN= function(i){
         1:K[i] %% (length(P)+1)}))
       Tx <- lapply(1:nrow(unsample.allocs), FUN = function(i) {
@@ -2256,6 +2290,50 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
           pred.temp <- predict(pred.fit, data.frame(TTC = pred.TTC,
                                                     TGI = pred.TGI), type = "response")
         }
+    } else {
+      n.pred <- 100
+      Xdata <- foreach(iterators::icount(n.pred)) %dorng%
+        {
+          Xclus.size.list <- c()
+          for (i in 1:length(K)){
+            temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                           prob= c(1-(K[i]-floor(K[i])),
+                                   (K[i]-floor(K[i]))),
+                           1, replace=T)
+            Xclus.size.list <- c(Xclus.size.list,temp)}
+          ### convert cluster size per period as a vector
+          period <- unlist(lapply(1:length(Xclus.size.list), FUN= function(i){
+            sample(0:J,Xclus.size.list[i],replace = T)}))
+          return(list("clus.size.list"=Xclus.size.list,"period"=period))
+        }
+      pred.fit <- glm(cbind(n.sims*power,n.sims*(1-power)) ~ TTC + TGI + I(TTC^2), family = "binomial",
+                      data = pred.data)
+      temp <- foreach(i = 1:nrow(unsample.allocs)) %dorng%
+        {
+          output <- matrix(0, nrow=n.sims,ncol=4)
+          con <- c()
+          int <- c()
+          cor <- c()
+          for (j in 1:n.pred){
+            temp.allocs <- rep(unsample.allocs[i,],Xdata[[j]]$clus.size.list)
+            unsample.Tx <- ifelse(Xdata[[j]]$period < temp.allocs, 0, 1)
+            con[j] <- sum(Xdata[[j]]$clus.size.list)-sum(unsample.Tx) # size in control across all periods and clusters
+            int[j] <- sum(unsample.Tx) # size in intervention across all periods and clusters
+            cor[j] <- cor(Xdata[[j]]$period,unsample.Tx)
+          }
+          list("con"= con, "int"= int, "cor"= cor)
+        }
+      con <- c()
+      int <- c()
+      TTC <- c()
+      for (i in 1:length(temp)){
+        con[i] <- mean(temp[[i]]$con)
+        int[i] <- mean(temp[[i]]$int)
+        TTC[i] <- mean(temp[[i]]$cor)
+      }
+      pred.value <- predict(pred.fit, data.frame(TGI= abs(con-int), TTC = TTC),
+                            type = "response")
+    }
     if (plot == TRUE) {
       plotdata <- data.frame(weight = c(wgh[index], wgh[-index]),
                              power = c(pred.data$power, pred.value))
@@ -2275,28 +2353,23 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
       print(ggplot(plotdata, aes(x = power, y = ..density.., weight = weight)) +
               geom_histogram(binwidth = 0.01, fill = "blue") + ggtitle("Power distribution"))
     }
-    plotdata <- data.frame(weight = sample.weight/(sum(sample.weight)),
-                           power = pred.data$power)
     wgt.power <- sum(pred.data$power * (sample.weight/(sum(sample.weight))))
   }
-  #if (pred.power == TRUE){
-  #  plotdata <- data.frame(weight = c(wgh[index], wgh[-index]),
-  #                           power = c(pred.data$power, pred.value))
-  #  }
-  #else {
-  #  plotdata <- data.frame(weight = c(sample.weight),
-  #                           power = c(pred.data$power))
-  #}
-  plotdata1 <- plotdata[order(plotdata$power),]
-  risk <- sum(plotdata1$weight[which(plotdata1$power <= pwr.thrd)])
+  if (pred.power == TRUE){
+    final.data <- data.frame(weight = c(wgh[index], wgh[-index]),
+                             power = c(pred.data$power, pred.value))}
+  else {
+    final.data <- data.frame(weight = c(sample.weight),
+                             power = c(pred.data$power))
+  }
+  final.data1 <- final.data[order(final.data$power),]
+  risk <- sum(final.data1$weight[which(final.data1$power <= pwr.thrd)])
   if (is.null(pwr.thrd)){
     risk <- NULL
   }
-  list(attained.power.sim = c(pred.data[,1],as.vector(pred.value)), coefs = pred.data[,-1], weights = c(sample.weight,sample.weight.c),
-       PREP.sim = wgt.power, risk.sim = risk, allocation = sample.allocs)
+  list(coefs = pred.data, predicted.power = as.vector(pred.value), weights = c(sample.weight),
+      PREP = wgt.power, risk = risk, allocation = sample.allocs)
 }
-
-
 
 siglevel <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = FALSE,
                      design, user.allocs, n.sims, rho = NULL, sigma.a = NULL, sigma.e = NULL,
@@ -2395,14 +2468,13 @@ siglevel <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = 
     J <- 2
     if (family == "gaussian") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- K
-        #clus.size.list <- c()
-        #for (i in 1:length(K)){
-        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
-        #                 prob= c(1-(K[i]-floor(K[i])),
-        #                         (K[i]-floor(K[i]))),
-        #                 1, replace=T)
-        #  clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- c()
+        for (i in 1:length(K)){
+          temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                         prob= c(1-(K[i]-floor(K[i])),
+                                 (K[i]-floor(K[i]))),
+                         1, replace=T)
+          clus.size.list <- c(clus.size.list,temp)}
         ### convert cluster size per period as a vector
         size <- sum(clus.size.list)
         period <- rep(1, size) #not used in pcrt
@@ -2447,14 +2519,14 @@ siglevel <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = 
     ### Binary outcomes
     if (family == "binomial") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- K
-        #clus.size.list <- c()
-        #for (i in 1:length(K)){
-        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
-        #                 prob= c(1-(K[i]-floor(K[i])),
-        #                         (K[i]-floor(K[i]))),
-        #                 1, replace=T)
-        #  clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- c()
+        for (i in 1:length(K)){
+          temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                         prob= c(1-(K[i]-floor(K[i])),
+                                 (K[i]-floor(K[i]))),
+                         1, replace=T)
+          clus.size.list <- c(clus.size.list,temp)}
+
         size <- sum(clus.size.list)
         period <- rep(1, size) #not used in pcrt
         clus.id <- rep(1:sum(I), clus.size.list)
@@ -2502,14 +2574,13 @@ siglevel <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = 
     ### count outcomes
     if (family == "poisson") {
       data <- foreach(iterators::icount(n.sims)) %dorng% {
-        clus.size.list <- K
-        #clus.size.list <- c()
-        #for (i in 1:length(K)){
-        #  temp <- sample(c(floor(K[i]),floor(K[i])+1),
-        #                 prob= c(1-(K[i]-floor(K[i])),
-        #                         (K[i]-floor(K[i]))),
-        #                 1, replace=T)
-        #  clus.size.list <- c(clus.size.list,temp)}
+        clus.size.list <- c()
+        for (i in 1:length(K)){
+          temp <- sample(c(floor(K[i]),floor(K[i])+1),
+                         prob= c(1-(K[i]-floor(K[i])),
+                                 (K[i]-floor(K[i]))),
+                         1, replace=T)
+          clus.size.list <- c(clus.size.list,temp)}
         size <- sum(clus.size.list)
         period <- rep(1, size) #not used in pcrt
         clus.id <- rep(1:sum(I), clus.size.list)
@@ -3161,10 +3232,10 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
     wgh <- NULL
     risk <- NULL}
 
-  if (design == "sw") return(list(attained.power.analytic=power.mean, PREP.analytic = sum(power.mean*wgh), CV = CV, PREP.CV= power.CV, allocations = allocs, risk.analytic = risk))
-  #if (design == "sw" & !is.null(user.allocs)) return(list(attained.power.analytic=power.mean, CV = CV, PREP.CV= power.CV, allocations = allocs, risk.analytic = risk))
-  if (design == "pcrt")  return(list(attained.power.analytic=power.mean, PREP.analytic = sum(power.mean*wgh), CV = CV, PREP.CV= power.CV, allocations = allocs, risk.analytic = risk))
-  #if (design == "pcrt" & !is.null(user.allocs))  return(list(attained.power.analytic=power.mean, CV = CV, PREP.CV= power.CV, allocations = allocs, risk.analytic = risk))
+  if (design == "sw" & is.null(user.allocs)) return(list(attained.power=power.mean, PREP = sum(power.mean*wgh), weights = wgh, CV = CV, PREP.CV= power.CV, allocations = allocs, risk = risk))
+  if (design == "sw" & !is.null(user.allocs)) return(list(attained.power=power.mean, CV = CV, PREP.CV= power.CV, risk = risk))
+  if (design == "pcrt" & is.null(user.allocs))  return(list(attained.power=power.mean, PREP = sum(power.mean*wgh), weights = wgh, CV = CV, PREP.CV= power.CV, allocations = allocs, risk = risk))
+  if (design == "pcrt" & !is.null(user.allocs))  return(list(attained.power=power.mean, CV = CV, PREP.CV= power.CV, risk = risk))
 
 }
 
@@ -3222,11 +3293,8 @@ power.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NUL
       risk <- NULL
     }
     res1$risk <- risk
-    res1$allocations <- NULL
-    ### Redefine PREP in case only part of it has been evaulated
-    res1$PREP.analytic <- sum(res1$attained.power.analytic*(wgh/sum(wgh)))
   }
-  if(method =="both") {return(list(results = c(res, res1), inputs = list(I = I, P = P, K = K, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, pwr.thrd = pwr.thrd, factor.time = factor.time,
+  if(method =="both") {return(list(results = list(simres = res, analyticres = res1), inputs = list(I = I, P = P, K = K, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, pwr.thrd = pwr.thrd, factor.time = factor.time,
                                                                                                    design = design, gen.all = gen.all, n.allocs = n.allocs,  n.sims = n.sims, rho = rho,
                                                                                                    sigma.e = sigma.e, sigma.a = sigma.a, plot = plot, sig.level = sig.level,
                                                                                                    family = family)))} else {return(list(results = res, inputs = list(I = I, P = P, K = K, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, pwr.thrd = pwr.thrd, factor.time = factor.time,
@@ -3264,9 +3332,7 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = F,
                         design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a)
     res$PREP.CV <- NULL
-    res$allocations <- NULL
-    res$risk.analytic <- NULL
-    res$PREP.analytic <- NULL
+    res$risk <- NULL
 
   }
   if (method == "sim"){
@@ -3291,11 +3357,9 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
                         mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = F,
                         design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a)
     res1$PREP.CV <- NULL
-    res1$allocations <- NULL
-    res1$risk.analytic <- NULL
-    res1$PREP.analytic <- NULL
+    res1$risk <- NULL
   }
-  if(method =="both") {return(list(results = c(res,res1), inputs = list(I = I, P = P, K = K, user.allocs = user.allocs, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, factor.time = factor.time,
+  if(method =="both") {return(list(results = list(simres = res, analyticres = res1), inputs = list(I = I, P = P, K = K, user.allocs = user.allocs, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, factor.time = factor.time,
                                                                     design = design, n.sims = n.sims, rho = rho,
                                                                     sigma.e = sigma.e, sigma.a = sigma.a, sig.level = sig.level,
                                                                     family = family)))} else {return(list(results = res, inputs = list(I = I, P = P, K = K, user.allocs = user.allocs, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, factor.time = factor.time,
@@ -3348,8 +3412,6 @@ power.strat.pd <- function(I, P , K , S , mu0, Tx.effect, Time.effect = NULL, pw
     }
     res1$risk <- risk
     res1$PREP <- NULL
-    res1$allocations <- NULL
-    res1$PREP.analytic <- sum(res1$attained.power.analytic*(wgh/sum(wgh)))
   }
   if(method =="both") {return(list(results = list(simres = res, analyticres = res1), inputs = list(I = I, P = P, K = K, S = S, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, pwr.thrd = pwr.thrd, factor.time = factor.time,
                                                                                                    design = design, gen.all = gen.all, n.allocs = n.allocs, n.sims = n.sims, rho = rho,
