@@ -25,7 +25,7 @@ For the P-CRT, length of each strata is equal to two. (e.g., P=list("a"=c(1,2),"
 }
   \item{K}{
 K is a vector indicating the number of participants in each cluster.
-Length of K equals the total number of clusters. K should be  ordered to match I (e.g., I = c(6, 2) and K = c(6, 6, 6, 6, 6, 6, 12, 12) means the first six small clusters have 6 pts per period and the two large clusters have 12 pts per period)
+Length of K equals the total number of clusters. K should be  ordered to match I (e.g., I = c(6, 2) and K = c(6, 6, 6, 6, 6, 6, 12, 12) means the first six small clusters have 6 pts per cluster and the two large clusters have 12 pts per cluster)
 }
   \item{S}{
 Stratum ID for each cluster. S is a factor variable and should be entered as the same order as I. (e.g., I = c(6, 2) and S = c("a", "b", "b", "a", "a", "b", "b", "a") means among six small clusters, small cluster #1 is at stratum a, small cluster #2 is at stratum b, etc., and the two large clusters are at stratum a and b respectively. Note that the levels in S should match the names of the elements in P.

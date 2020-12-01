@@ -25,7 +25,7 @@ For P-CRT, P is a vector indicating the number of clusters allocated to the cont
 }
   \item{K}{
 K is a vector indicating the number of participants in each cluster.
-Length of K equals the total number of clusters. K should be  ordered to match I (e.g., I = c(6, 2) and K = c(6, 6, 6, 6, 6, 6, 12, 12) means the first six small clusters have 6 pts per period and the two large clusters have 12 pts per period)
+Length of K equals the total number of clusters. K should be  ordered to match I (e.g., I = c(6, 2) and K = c(6, 6, 6, 6, 6, 6, 12, 12) means the first six small clusters have six pts per cluster and the two large clusters have 12 pts per cluster)
 }
   \item{mu0}{
 Baseline mean/risk/rate on the outcome’s natural scale (i.e., not transformed by the link function)
