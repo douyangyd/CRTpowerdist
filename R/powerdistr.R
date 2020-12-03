@@ -3245,6 +3245,7 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
   n.cores <- parallel::detectCores()
   doParallel::registerDoParallel(cores=n.cores-1)
   if (adj.pwr == TRUE){
+    if (method == "analytic" | method == "both"){stop("Adjust for Type I error only works when Method = 'sim'")}
     if (!is.null(seed)){
       set.seed(seed)
     }
@@ -3256,18 +3257,17 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
     sig <- temp
   } else {sig <- sig.level}
   if (method == "analytic"){
-    #n.sims = NULL
-    #if (!is.null(seed)){
-    #  set.seed(seed)
-    #}
-    #res <- analytic.pd (I = I, P = P, K = K, user.allocs = user.allocs, pwr.thrd = pwr.thrd, factor.time = factor.time,
-    #                    mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = F,
-    #                    design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a)
-    #res$PREP.CV <- NULL
-    #res$allocations <- NULL
-    #res$risk.analytic <- NULL
-    #res$PREP.analytic <- NULL
-    stop("Adjust for Type I error only works when Method = 'sim'")
+    n.sims = NULL
+    if (!is.null(seed)){
+      set.seed(seed)
+    }
+    res <- analytic.pd (I = I, P = P, K = K, user.allocs = user.allocs, pwr.thrd = pwr.thrd, factor.time = factor.time,
+                        mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = F,
+                        design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a)
+    res$PREP.CV <- NULL
+    res$allocations <- NULL
+    res$risk.analytic <- NULL
+    res$PREP.analytic <- NULL
   }
   if (method == "sim"){
     if (!is.null(seed)){
@@ -3280,21 +3280,20 @@ power.ap <- function(I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs 
   }
 
   if (method == "both"){
-    stop("Adjust for Type I error only works when Method = 'sim'")
-    #if (!is.null(seed)){
-    #  set.seed(seed)
-    #}
-    #res <- sim.ap (I = I, P = P, K = K, user.allocs = user.allocs, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, factor.time = factor.time,
-    #               design = design, n.sims = n.sims, rho = rho,
-    #               sigma.e = sigma.e, sigma.a = sigma.a, sig.level = sig,
-    #               family = family)
-    #res1 <- analytic.pd (I = I, P = P, K = K, user.allocs = user.allocs, pwr.thrd = pwr.thrd, factor.time = factor.time,
-    #                    mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = F,
-    #                    design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a)
-    #res1$PREP.CV <- NULL
-    #res1$allocations <- NULL
-    #res1$risk.analytic <- NULL
-    #res1$PREP.analytic <- NULL
+    if (!is.null(seed)){
+      set.seed(seed)
+    }
+    res <- sim.ap (I = I, P = P, K = K, user.allocs = user.allocs, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, factor.time = factor.time,
+                   design = design, n.sims = n.sims, rho = rho,
+                   sigma.e = sigma.e, sigma.a = sigma.a, sig.level = sig,
+                   family = family)
+    res1 <- analytic.pd (I = I, P = P, K = K, user.allocs = user.allocs, pwr.thrd = pwr.thrd, factor.time = factor.time,
+                        mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, rho = rho, family = family, plot = F,
+                        design = design, sig.level = sig, sigma.e = sigma.e, sigma.a = sigma.a)
+    res1$PREP.CV <- NULL
+    res1$allocations <- NULL
+    res1$risk.analytic <- NULL
+    res1$PREP.analytic <- NULL
   }
   if(method =="both") {return(list(results = c(res,res1), inputs = list(I = I, P = P, K = K, user.allocs = user.allocs, mu0 = mu0, Tx.effect = Tx.effect, Time.effect = Time.effect, factor.time = factor.time,
                                                                     design = design, n.sims = n.sims, rho = rho,
