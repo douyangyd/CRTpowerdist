@@ -3221,7 +3221,7 @@ power.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NUL
     if (is.null(pwr.thrd)){
       risk <- NULL
     }
-    res1$risk <- risk
+    res1$risk.analytic <- risk
     res1$allocations <- NULL
     ### Redefine PREP in case only part of it has been evaulated
     res1$PREP.analytic <- sum(res1$attained.power.analytic*(wgh/sum(wgh)))
@@ -3347,7 +3347,7 @@ power.strat.pd <- function(I, P , K , S , mu0, Tx.effect, Time.effect = NULL, pw
     if (is.null(pwr.thrd)){
       risk <- NULL
     }
-    res1$risk <- risk
+    res1$risk.analytic <- risk
     res1$PREP <- NULL
     res1$allocations <- NULL
     res1$PREP.analytic <- sum(res1$attained.power.analytic*(wgh/sum(wgh)))

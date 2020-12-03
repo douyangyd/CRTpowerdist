@@ -120,6 +120,7 @@ Yongdong Ouyang, Liang Xu, Hubert Wong
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
+## Continous time effect
 power.ap(I = c(9, 3), P = c(3, 3, 3, 3), K = c(rep(6, 9), rep(62, 3)),
          user.allocs = rbind(c(1, 1, 1, 2, 2, 2,
                                3, 3, 3, 4, 4, 4)),
@@ -127,5 +128,14 @@ power.ap(I = c(9, 3), P = c(3, 3, 3, 3), K = c(rep(6, 9), rep(62, 3)),
          factor.time = FALSE, design = "sw", rho = 0.01, sigma.e = 1,
          sig.level = 0.05, adj.pwr =FALSE, family = "gaussian",
          method = "sim", seed = 222,
+         n.sims = 2000)
+
+## Categorical time effect
+power.ap(I = c(9, 3), P = c(3, 3, 3, 3), K = c(rep(30, 9), rep(310, 3)),
+         user.allocs = rbind(c(1, 1, 1, 2, 2, 2,
+                               3, 3, 3, 4, 4, 4)),
+         mu0 = 0, Tx.effect = 0.26, Time.effect = c(1,2,3,4), factor.time = FALSE,
+         design = "sw", rho = 0.01, sigma.e = 1, sig.level = 0.05, adj.pwr =FALSE,
+         family = "gaussian", method = "sim", seed = 222,
          n.sims = 2000)
 }
