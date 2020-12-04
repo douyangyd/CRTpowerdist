@@ -296,10 +296,6 @@ DesignMatrix <- function(I, J, P, K, S, factor.time = FALSE, user.allocs = NULL,
 
 
 # function to generate unique allocations for stratified randomization
-
-
-
-
 all_allocs_strat <- function(I, P, S, K) {
   # identify levels of stratification
   strat_name = levels(S)
@@ -407,7 +403,11 @@ freq <- compiler::cmpfun(freq)
 DesignMatrix <- compiler::cmpfun(DesignMatrix)
 all_allocs_strat <- compiler::cmpfun(all_allocs_strat)
 
-
+##-------------------------------------------------------
+## Functions used to do power calculations and construct
+## power distribution. These functions are wrapped in main
+## functions
+##-------------------------------------------------------
 
 ### Simulation based calculation
 
@@ -3175,7 +3175,10 @@ siglevel <- compiler::cmpfun(siglevel)
 analytic.pd <- compiler::cmpfun(analytic.pd)
 
 
-
+## ---------------------------------------------------
+## Main functions and wrapper function to combine
+## above functions
+## ---------------------------------------------------
 
 
 
