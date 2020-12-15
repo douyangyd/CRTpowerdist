@@ -3,7 +3,7 @@ Power distribution R Package (Version 0.4.0)
 The previous version are named during the development process and will not be published
 
 
-This is a package for calculate attained power and construted power distributions for unequal cluster-size, cross-sectional stepped-wedge and parallel cluster randomized trials, with or without stratification. Allowed outcome types are: continuous (Gaussian), binary and count.
+This is a package for calculating attained power and constructing power distributions for unequal cluster-size, cross-sectional stepped-wedge and parallel cluster randomized trials, with or without stratification. Allowed outcome types are: continuous (Gaussian), binary and count.
 
 <p>&nbsp;</p>
 
