@@ -1,4 +1,4 @@
-# powerdist
+# CRTpowerdist
 Power distribution R Package (Version 0.4.0)
 The previous version are named during the development process and will not be published
 
@@ -16,11 +16,11 @@ install.packages("devtools")
 ```
 <p>&nbsp;</p>
 
-### Step two: install _"**powerdist**"_ from Github
+### Step two: install _"**CRTpowerdist**"_ from Github
 
 ```
 library(devtools)
-install_github("https://github.com/douyangyd/powerdist")
+install_github("https://github.com/douyangyd/CRTpowerdist")
 ```
 <p>&nbsp;</p>
 
@@ -28,14 +28,14 @@ install_github("https://github.com/douyangyd/powerdist")
 Remember to load the package before using the package
 
 ```
-library(powerdist)
+library(CRTpowerdist)
 ```
 
 <p>&nbsp;</p>
 
 # Shinyapp
 
-A shinyapp has been created for non-R user (https://douyang.shinyapps.io/powerdist/)
+A shinyapp has been created for non-R user (https://douyang.shinyapps.io/CRTpowerdist/)
 
 
 <p>&nbsp;</p>
