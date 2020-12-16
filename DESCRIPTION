@@ -1,4 +1,4 @@
-Package: powerdist
+Package: CRTpowerdist
 Type: Package
 Title: Power distribution for cluster randomized trial
 Version: 0.4.0
