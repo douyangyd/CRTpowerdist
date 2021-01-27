@@ -9,10 +9,10 @@ Use simulations or analytic formula to calculate attained powers and construct p
 }
 \usage{
 power.strat.pd (I, P , K , S , mu0, Tx.effect, Time.effect = NULL,
-                pwr.thrd = NULL, factor.time = TRUE, rho = NULL,
-                family, design, gen.all = TRUE, n.allocs, n.sims,
-                sig.level = 0.05, plot = FALSE, seed = NULL,
-                sigma.e = NULL, sigma.a = NULL, method = "analytic")
+                pwr.thrd = NULL, factor.time = TRUE, family,
+                design, rho = NULL, sigma.a = NULL, sigma.e = NULL,
+                sig.level = 0.05, method = "analytic", plot = FALSE,
+                gen.all = TRUE, n.allocs,  n.sims, seed = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

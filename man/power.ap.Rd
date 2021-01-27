@@ -10,8 +10,8 @@ Use simulations or analytic formula to calculate attained power for specific all
 \usage{
 power.ap (I, P , K , mu0, Tx.effect, Time.effect = NULL, user.allocs,
           factor.time = TRUE, family, design, rho = NULL,
-          sigma.e = NULL, sigma.a = NULL, sig.level = 0.05,
-          method = "analytic", adj.pwr=FALSE, seed = NULL,
+          sigma.a = NULL, sigma.e = NULL, sig.level = 0.05,
+          method = "analytic", seed = NULL, adj.pwr=FALSE,
           n.sims = 1000)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -48,17 +48,17 @@ Indicate the type of outcome. One of "gaussian", "binomial" or "poisson" (case s
   \item{design}{
 Can be "pcrt" for a P-CRT or "sw" for a SW-CRT
 }
-  \item{sig.level}{
-Significance level (Default=0.05). If you have different allocations to evaluate the sig.level can be a vector in which the i-th entry specifies the significance level for the allocation in the i-th row of user.allocs
-}
   \item{rho}{
 Intra-cluster coefficient (ICC)
 }
-  \item{sigma.e}{
+  \item{sigma.a}{
 Between-cluster SD
 }
-  \item{sigma.a}{
+  \item{sigma.e}{
 Individual-level SD (at most, two of rho, sigma.a, and sigma.e should be provided)
+}
+  \item{sig.level}{
+Significance level (Default=0.05). If you have different allocations to evaluate the sig.level can be a vector in which the i-th entry specifies the significance level for the allocation in the i-th row of user.allocs
 }
   \item{method}{
 "sim", "analytic" or "both". Choice of using simulation, analytic formula or both methods to calculate the power
