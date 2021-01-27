@@ -9,8 +9,8 @@ Use simulations or analytic formula to calculate attained powers and construct p
 }
 \usage{
 power.pd (I, P, K, mu0, Tx.effect, Time.effect = NULL,
-          pwr.thrd = NULL, factor.time = TRUE, design, rho = NULL,
-          family, sig.level = 0.05, sigma.e = NULL, sigma.a = NULL,
+          pwr.thrd = NULL, factor.time = TRUE, family, design, rho = NULL,
+          sigma.e = NULL, sigma.a = NULL, sig.level = 0.05,
           method = "analytic", plot = FALSE, gen.all = TRUE, n.allocs,
           n.sims, seed = NULL)
 }
