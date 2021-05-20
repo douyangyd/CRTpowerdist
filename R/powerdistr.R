@@ -990,6 +990,7 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
   ### (Default=0.05) family: one of gaussian, binomial or poisson (case
   ### sensitive)
 
+  if ((length(unique(K) == 1) == T)) {n.allocs = 1}
 
   ### check input vadility
   if (sum(I) != length(K)) {
@@ -1091,7 +1092,9 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
       print(paste0("Total number of unique allocations: ", nrow(sample.allocs)))
     } else
     {
-      pred.power <- FALSE
+      if ((length(unique(K) == 1) == T)) { pred.power <- FALSE} else {
+        pred.power <- FALSE
+      }
       index <- sample(1:nrow(allocs), n.allocs)
       sample.allocs <- allocs[index, , drop = FALSE]  #maintain matrix type when n.allocs=1
       sample.weight <- wgh[index]
@@ -1328,7 +1331,9 @@ sim.pd <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, pwr.thrd = NULL,
       sample.weight.c <- NULL
       print(paste0("Total number of unique allocations: ", nrow(sample.allocs)))
     } else {
-      pred.power <- TRUE
+      if ((length(unique(K) == 1) == T)) { pred.power <- FALSE} else {
+        pred.power <- TRUE
+      }
       index <- sample(1:nrow(allocs), n.allocs)
       sample.allocs <- allocs[index, , drop = FALSE]  #maintain matrix type when n.allocs=1
       sample.weight <- wgh[index]
@@ -1648,6 +1653,8 @@ sim.strata.pd <- function(I, P, S, K, mu0, Tx.effect, Time.effect = NULL, pwr.th
                           design, gen.all = TRUE, n.allocs = NULL, n.sims, rho = NULL,
                           sigma.a = NULL, sigma.e = NULL, print.allocs = TRUE, plot = FALSE, sig.level = 0.05,
                           family = "gaussian") {
+
+  if ((length(unique(K) == 1) == T)) {n.allocs = 1}
 
   ### check input vadility
   if (sum(I) != length(K)) {
@@ -2318,6 +2325,7 @@ siglevel <- function(I, P, K, mu0, Tx.effect, Time.effect = NULL, factor.time = 
   ### (Only two of rho,sigma.a and sigma.e should be provided) sig.level:
   ### significance level (Default=0.05) family: one of gaussian, binomial
   ### or poisson (case sensitive)
+
 
   ### check input vadility
   if (sum(I) != length(K)) {
