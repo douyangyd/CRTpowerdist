@@ -3020,19 +3020,12 @@ analytic.pd <- function(I, P = NULL, K = NULL, S = NULL, user.allocs = NULL, pwr
       ses <- abs(Tx.effect)/sigma.e
       power.CV <- pnorm(sqrt(np*m*ncpp*(ses^2)/(4*DE_C*DE_R))-qnorm(1-sig.level/2))
     }
-    if (length(Time.effect) != 1){avg_time <- Time.effect} else {avg_time <- (c(0:length(P)))*(Time.effect)}
     if (family == "binomial"){
-      mu0_bin <- mean(1/(1+exp(-(log(mu0/(1-mu0)) + avg_time))))
-      mu1_bin <- mean(1/(1+exp(-(log(mu0/(1-mu0)) + log(Tx.effect) + avg_time))))
-      sigma.e_bin <- sqrt((mu0_bin * (1 - mu0_bin) + mu1_bin * (1 - mu1_bin))/2)
-      ses <- abs(mu1_bin-mu0_bin)/sigma.e_bin
+      ses <- abs(mu1-mu0)/sigma.e
       power.CV <- pnorm(sqrt(np*m*ncpp*(ses^2)/(4*DE_C*DE_R))-qnorm(1-sig.level/2))
     }
     if (family == "poisson"){
-      mu0_count <- mean(exp(log(mu0) + avg_time))
-      mu1_count <- mean(exp(log(mu0) + log(Tx.effect) + avg_time))
-      sigma.e_count <- sqrt((mu0_count + mu1_count)/2)
-      ses <- abs(mu1_count-mu0_count)/sigma.e_count
+      ses <- abs(mu1-mu0)/sigma.e
       power.CV <- pnorm(sqrt(np*m*ncpp*(ses^2)/(4*DE_C*DE_R))-qnorm(1-sig.level/2))
     }
 
